@@ -100,6 +100,15 @@
             "details": "Implement integration tests that verify the entire database schema works correctly together. Test complex scenarios involving multiple models. Verify constraints and relationships across the entire schema. Create test fixtures and helpers for database testing.",
             "status": "pending",
             "testStrategy": "Run integration tests against a test database. Test complete workflows involving multiple models. Verify that all constraints and relationships work correctly in integration scenarios."
+          },
+          {
+            "id": 11,
+            "title": "Backend integration tests (core flows)",
+            "description": "Single consolidated integration test suite covering league create, join, celebrity add/list, draft start, pick, draft-state, recap.",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 1
           }
         ]
       },
@@ -155,28 +164,6 @@
             "details": "Register the POST /leagues endpoint in the API router configuration. Ensure proper middleware is applied including validation, authentication if required, and error handling.",
             "status": "pending",
             "testStrategy": "Verify the route is correctly registered and accessible. Test that middleware is applied in the correct order."
-          },
-          {
-            "id": 6,
-            "title": "Write integration tests",
-            "description": "Create comprehensive integration tests for the league creation API endpoint.",
-            "dependencies": [
-              "2.5"
-            ],
-            "details": "Write integration tests that verify the complete flow of league creation, including: 1) Successful creation with minimum fields, 2) Successful creation with all fields, 3) Validation errors for missing or invalid fields, 4) Verification that the returned league contains all expected fields including the joinToken.",
-            "status": "pending",
-            "testStrategy": "Use a test database to ensure tests are isolated. Test the API endpoint directly with various inputs and verify the responses match expectations."
-          },
-          {
-            "id": 7,
-            "title": "Document the API endpoint",
-            "description": "Create documentation for the league creation API endpoint.",
-            "dependencies": [
-              "2.5"
-            ],
-            "details": "Document the POST /leagues endpoint including: 1) Required and optional request parameters, 2) Validation rules, 3) Response format, 4) Example requests and responses, and 5) Potential error codes and messages.",
-            "status": "pending",
-            "testStrategy": "Verify documentation accuracy by comparing with the implemented endpoint. Ensure all parameters, responses, and error cases are correctly documented."
           }
         ]
       },
@@ -270,23 +257,6 @@
             "details": "After successfully creating a team, broadcast a notification to all connected clients for the league that a new team has joined. Include relevant team information in the notification.",
             "status": "pending",
             "testStrategy": "Test that WebSocket notifications are sent when a team joins. Verify the notification contains the correct team information."
-          },
-          {
-            "id": 8,
-            "title": "Write integration tests",
-            "description": "Create comprehensive integration tests for the complete join flow.",
-            "dependencies": [
-              "3.1",
-              "3.2",
-              "3.3",
-              "3.4",
-              "3.5",
-              "3.6",
-              "3.7"
-            ],
-            "details": "Write integration tests that verify the complete join flow from request to response, including database updates and WebSocket notifications. Test both successful joins and various error scenarios.",
-            "status": "pending",
-            "testStrategy": "Test the complete join flow with valid parameters. Test all error scenarios. Verify database state after successful joins."
           }
         ]
       },
@@ -377,21 +347,6 @@
             "details": "When a new celebrity is successfully added to the draft pool, broadcast an event via WebSocket to all connected clients for that league. Include the celebrity details and the team that added it in the event payload.",
             "status": "pending",
             "testStrategy": "Test that WebSocket events are properly broadcast when celebrities are added. Verify the event payload contains all necessary information."
-          },
-          {
-            "id": 10,
-            "title": "Write integration tests",
-            "description": "Create comprehensive integration tests for the celebrity management API",
-            "dependencies": [
-              "4.3",
-              "4.4",
-              "4.5",
-              "4.8",
-              "4.9"
-            ],
-            "details": "Implement integration tests that cover the complete flow of adding and retrieving celebrities, including duplicate detection, pagination, and search functionality. Test the API endpoints in isolation and as part of the broader application flow.",
-            "status": "pending",
-            "testStrategy": "Test the complete flow from adding celebrities to retrieving them with various parameters. Test integration with other components like WebSockets."
           }
         ]
       },
@@ -508,19 +463,6 @@
             "details": "Modify the team join endpoint to check the league status and reject new join requests if the league is in 'drafting' status.",
             "status": "pending",
             "testStrategy": "Test that new teams cannot join a league after the draft has started."
-          },
-          {
-            "id": 10,
-            "title": "Write integration tests",
-            "description": "Create comprehensive integration tests for the draft start API",
-            "dependencies": [
-              "5.7",
-              "5.8",
-              "5.9"
-            ],
-            "details": "Write tests that cover the entire flow of starting a draft, including all validation rules, error cases, and successful execution. Test with various league configurations.",
-            "status": "pending",
-            "testStrategy": "Run integration tests against a test database to verify the complete functionality of the draft start API."
           }
         ]
       },
@@ -639,17 +581,6 @@
             "details": "Create the controller function that handles the POST request to /leagues/{leagueId}/picks. This should authenticate the request, call the validation and processing functions, handle errors appropriately, and return the response.",
             "status": "pending",
             "testStrategy": "Test the complete API flow with various scenarios including successful picks and all error cases. Verify appropriate HTTP status codes are returned."
-          },
-          {
-            "id": 10,
-            "title": "Write comprehensive tests",
-            "description": "Create unit and integration tests for the draft pick API",
-            "dependencies": [
-              "6.9"
-            ],
-            "details": "Write unit tests for each component of the draft pick logic. Write integration tests that verify the complete flow from request to response. Include tests for error scenarios and edge cases.",
-            "status": "pending",
-            "testStrategy": "Test making valid picks. Test invalid scenarios: wrong turn, already picked celebrity, non-existent celebrity. Test the complete draft flow from first to last pick. Test concurrent pick attempts to verify locking mechanism works correctly."
           }
         ]
       },
@@ -734,32 +665,6 @@
             "details": "Implement data serialization to format the API responses consistently. Ensure all required fields are included and properly formatted according to the API specification.",
             "status": "pending",
             "testStrategy": "Test serialization with various data scenarios to ensure consistent output format."
-          },
-          {
-            "id": 7,
-            "title": "Implement API documentation",
-            "description": "Document the draft state and recap API endpoints",
-            "dependencies": [
-              "7.4",
-              "7.5",
-              "7.6"
-            ],
-            "details": "Create comprehensive API documentation for the draft state and recap endpoints, including request parameters, response format, and example responses.",
-            "status": "pending",
-            "testStrategy": "Verify documentation accuracy by comparing with actual API responses."
-          },
-          {
-            "id": 8,
-            "title": "Implement integration tests",
-            "description": "Create integration tests for the draft state and recap API endpoints",
-            "dependencies": [
-              "7.4",
-              "7.5",
-              "7.6"
-            ],
-            "details": "Implement integration tests that verify the complete flow from league creation through draft completion, testing both endpoints at various stages of the draft.",
-            "status": "pending",
-            "testStrategy": "Test the complete draft flow from setup to completion, verifying both endpoints return correct data at each stage."
           }
         ]
       },
@@ -993,22 +898,6 @@
             "details": "Implement the navigation logic to redirect users to the pre-draft lobby page after successfully joining a league. Ensure that the necessary team information is available in the new page context.",
             "status": "pending",
             "testStrategy": "Test the redirect flow after successful join. Verify that team information is correctly passed to or available in the pre-draft lobby."
-          },
-          {
-            "id": 15,
-            "title": "Create Integration Tests for Join Flow",
-            "description": "Develop comprehensive integration tests for the entire join flow from invite link to pre-draft lobby.",
-            "dependencies": [
-              "10.1",
-              "10.2",
-              "10.3",
-              "10.4",
-              "10.5",
-              "10.6"
-            ],
-            "details": "Create end-to-end tests that cover the complete join flow, including all success and error scenarios. Test the flow from receiving an invite link to successfully joining and being redirected to the pre-draft lobby.",
-            "status": "pending",
-            "testStrategy": "Use a testing framework like Cypress to test the full user journey. Test all error states and the successful flow. Verify local storage persistence across page navigation."
           },
           {
             "id": 16,
@@ -1419,6 +1308,15 @@
             "details": "Apply final styling touches, add transitions and animations where appropriate. Optimize performance by implementing lazy loading, memoization, or other techniques as needed. Ensure the UI is fully responsive and accessible.",
             "status": "pending",
             "testStrategy": "Test performance with large datasets. Verify animations and transitions work smoothly. Test accessibility compliance. Conduct final cross-browser and cross-device testing."
+          },
+          {
+            "id": 34,
+            "title": "UI smoke tests (onboarding + draft)",
+            "description": "End-to-end smoke coverage for onboarding flow and draft page happy path; a small set of critical checks only.",
+            "details": "",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 12
           }
         ]
       },
