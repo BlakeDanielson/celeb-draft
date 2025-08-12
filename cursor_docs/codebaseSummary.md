@@ -2,6 +2,7 @@
 
 ### Structure
 - `cursor_docs/` contains PRD and planning docs.
+- `.taskmaster/` stores Task Master configuration and generated task definitions.
 
 ### Key Components (planned)
 - League creation and invite flow
@@ -17,9 +18,11 @@
 
 ### External Dependencies
 - None selected yet (to be decided during implementation planning)
+- Task Master AI (MCP) used for planning and task tracking only (no runtime dependency).
 
 ### Recent Changes
 - Added MVP PRD and roadmap docs to `cursor_docs/`.
+- Initialized Task Master and parsed PRD into `.taskmaster/tasks/tasks.json`.
 
 ### User Feedback Integration
 - MVP decisions captured directly from stakeholder responses; scope intentionally minimal.

@@ -23,5 +23,6 @@
 
 ### Completed Tasks
 - [x] MVP PRD created (this version)
+ - [x] PRD parsed into Task Master tasks (`.taskmaster/tasks/tasks.json`)
 
 

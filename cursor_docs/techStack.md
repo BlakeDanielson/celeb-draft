@@ -15,3 +15,6 @@
 Notes: Concrete framework/hosting decisions to be finalized during implementation planning.
 
 
+### Tooling
+- Task Master AI (MCP) for planning/work tracking. Files live under `.taskmaster/` with tasks in `.taskmaster/tasks/tasks.json`.
+
