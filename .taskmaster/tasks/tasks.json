@@ -10,7 +10,98 @@
         "priority": "high",
         "dependencies": [],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Project Repository",
+            "description": "Create a new project repository with appropriate folder structure for backend and frontend components",
+            "dependencies": [],
+            "details": "Set up a new repository with the following structure:\n- /backend: For server-side code\n- /frontend: For client-side code\n- /shared: For shared types and utilities\n- /docs: For documentation\nInclude appropriate configuration files (.gitignore, package.json, tsconfig.json, etc.) and README.md with project overview.",
+            "status": "pending",
+            "testStrategy": "Verify that the repository structure is correctly set up and all configuration files are properly initialized."
+          },
+          {
+            "id": 2,
+            "title": "Select and Configure Database",
+            "description": "Choose an appropriate database system and configure it for the project",
+            "dependencies": [],
+            "details": "Select a database system (e.g., PostgreSQL, MongoDB) that supports the required data models and constraints. Set up the database connection in the backend with appropriate configuration for development and production environments. Create database migration scripts or schema definitions.",
+            "status": "pending",
+            "testStrategy": "Test database connection and basic CRUD operations. Verify that the database configuration works in different environments."
+          },
+          {
+            "id": 3,
+            "title": "Implement League Model",
+            "description": "Create the League data model with all required fields and constraints",
+            "dependencies": [],
+            "details": "Implement the League model with fields: id, name, joinToken, status (enum: setup|drafting|complete), maxTeams (2-20), picksPerTeam (fixed at 5), createdAt. Add appropriate validation for each field. Ensure joinToken is unique and randomly generated. Create database indexes for efficient queries.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify League model creation, validation, and constraints. Test edge cases for maxTeams (2 and 20) and status transitions."
+          },
+          {
+            "id": 4,
+            "title": "Implement Team Model",
+            "description": "Create the Team data model with all required fields and constraints",
+            "dependencies": [],
+            "details": "Implement the Team model with fields: id, leagueId, displayName, draftPosition (1..N), joinedAt. Add validation for each field. Create a foreign key relationship with the League model. Ensure draftPosition is unique within a league. Add appropriate indexes for efficient queries.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify Team model creation, validation, and constraints. Test the relationship with the League model. Verify uniqueness of draftPosition within a league."
+          },
+          {
+            "id": 5,
+            "title": "Implement Celebrity Model",
+            "description": "Create the Celebrity data model with all required fields and constraints",
+            "dependencies": [],
+            "details": "Implement the Celebrity model with fields: id, leagueId, name, addedByTeamId, addedAt. Add validation for each field. Create foreign key relationships with League and Team models. Implement case-insensitive, trimmed uniqueness constraint for celebrity names within a league. Add appropriate indexes for efficient queries.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify Celebrity model creation, validation, and constraints. Test the case-insensitive uniqueness constraint with various combinations of case and whitespace. Test relationships with League and Team models."
+          },
+          {
+            "id": 6,
+            "title": "Implement DraftPick Model",
+            "description": "Create the DraftPick data model with all required fields and constraints",
+            "dependencies": [],
+            "details": "Implement the DraftPick model with fields: id, leagueId, round (1..5), overall (1..N*5), teamId, celebrityId, pickedAt. Add validation for each field. Create foreign key relationships with League, Team, and Celebrity models. Ensure uniqueness of overall pick number within a league. Add appropriate indexes for efficient queries.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify DraftPick model creation, validation, and constraints. Test the relationships with other models. Verify uniqueness of overall pick number within a league."
+          },
+          {
+            "id": 7,
+            "title": "Create Database Indexes and Constraints",
+            "description": "Implement all necessary database indexes and constraints for optimal performance",
+            "dependencies": [],
+            "details": "Review all models and add appropriate indexes for frequently queried fields. Implement constraints for data integrity, especially for the uniqueness of celebrity names within a league (case-insensitive, trimmed). Create composite indexes for queries that filter on multiple fields. Document all indexes and constraints.",
+            "status": "pending",
+            "testStrategy": "Test query performance with and without indexes. Verify that constraints prevent invalid data. Test the case-insensitive uniqueness constraint for celebrity names with various combinations."
+          },
+          {
+            "id": 8,
+            "title": "Implement Model Relationships and Associations",
+            "description": "Define and implement relationships between all data models",
+            "dependencies": [],
+            "details": "Implement one-to-many and many-to-many relationships between models. Define cascade behaviors for deletions and updates. Implement methods for retrieving related records efficiently. Ensure referential integrity across all models.",
+            "status": "pending",
+            "testStrategy": "Test relationship queries in both directions. Verify cascade behaviors. Test retrieval of related records with various query patterns."
+          },
+          {
+            "id": 9,
+            "title": "Create Data Access Layer",
+            "description": "Implement a data access layer for interacting with the database",
+            "dependencies": [],
+            "details": "Create repository classes or data access objects for each model. Implement CRUD operations with proper error handling. Add methods for common queries and operations specific to the game logic. Ensure all database operations are properly abstracted.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for all repository methods. Test error handling for database operations. Verify that complex queries return the expected results."
+          },
+          {
+            "id": 10,
+            "title": "Implement Integration Tests for Database Schema",
+            "description": "Create comprehensive integration tests for the database schema and relationships",
+            "dependencies": [],
+            "details": "Implement integration tests that verify the entire database schema works correctly together. Test complex scenarios involving multiple models. Verify constraints and relationships across the entire schema. Create test fixtures and helpers for database testing.",
+            "status": "pending",
+            "testStrategy": "Run integration tests against a test database. Test complete workflows involving multiple models. Verify that all constraints and relationships work correctly in integration scenarios."
+          }
+        ]
       },
       {
         "id": 2,
@@ -23,7 +114,81 @@
           1
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define League model and database schema",
+            "description": "Create the League model with all required fields including name, maxTeams, picksPerTeam, joinToken, and status.",
+            "dependencies": [],
+            "details": "Define a League model with the following fields: id (primary key), name (required string), maxTeams (integer, 2-20, default 8), picksPerTeam (fixed value of 5), joinToken (string, unique), status (enum: 'setup', 'drafting', 'completed'), createdAt, and updatedAt timestamps. Ensure proper validation constraints are set at the database level.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify the model constraints and validation rules. Test that default values are correctly applied."
+          },
+          {
+            "id": 2,
+            "title": "Implement joinToken generation function",
+            "description": "Create a utility function to generate secure, unguessable joinTokens for leagues.",
+            "dependencies": [],
+            "details": "Implement a function that generates a cryptographically secure random token (e.g., UUID v4) to be used as the league joinToken. The function should ensure the token is sufficiently random to resist guessing attacks and should be unique across all leagues.",
+            "status": "pending",
+            "testStrategy": "Test that generated tokens are unique across multiple calls. Verify the randomness and unpredictability of the tokens using appropriate statistical tests."
+          },
+          {
+            "id": 3,
+            "title": "Create input validation middleware",
+            "description": "Implement middleware to validate league creation request parameters.",
+            "dependencies": [],
+            "details": "Create validation middleware that checks: 1) league name is provided and is a non-empty string, 2) maxTeams is within the allowed range (2-20) if provided, and 3) no unexpected parameters are included. Return appropriate error messages for validation failures.",
+            "status": "pending",
+            "testStrategy": "Test validation with various inputs including valid data, missing name, out-of-range maxTeams values, and unexpected parameters."
+          },
+          {
+            "id": 4,
+            "title": "Implement POST /leagues endpoint handler",
+            "description": "Create the API endpoint handler that processes league creation requests and returns the created league.",
+            "dependencies": [
+              "2.1",
+              "2.2",
+              "2.3"
+            ],
+            "details": "Implement a handler for POST /leagues that: 1) Validates the request using the validation middleware, 2) Creates a new league with the provided name and maxTeams (default 8), 3) Sets picksPerTeam to 5, 4) Generates and assigns a joinToken using the utility function, 5) Sets initial status to 'setup', and 6) Returns the created league with all fields including the joinToken.",
+            "status": "pending",
+            "testStrategy": "Test successful league creation with minimum required fields. Test with optional fields specified. Verify all default values are correctly applied. Test error handling for validation failures."
+          },
+          {
+            "id": 5,
+            "title": "Register route in API router",
+            "description": "Add the league creation endpoint to the API router configuration.",
+            "dependencies": [
+              "2.4"
+            ],
+            "details": "Register the POST /leagues endpoint in the API router configuration. Ensure proper middleware is applied including validation, authentication if required, and error handling.",
+            "status": "pending",
+            "testStrategy": "Verify the route is correctly registered and accessible. Test that middleware is applied in the correct order."
+          },
+          {
+            "id": 6,
+            "title": "Write integration tests",
+            "description": "Create comprehensive integration tests for the league creation API endpoint.",
+            "dependencies": [
+              "2.5"
+            ],
+            "details": "Write integration tests that verify the complete flow of league creation, including: 1) Successful creation with minimum fields, 2) Successful creation with all fields, 3) Validation errors for missing or invalid fields, 4) Verification that the returned league contains all expected fields including the joinToken.",
+            "status": "pending",
+            "testStrategy": "Use a test database to ensure tests are isolated. Test the API endpoint directly with various inputs and verify the responses match expectations."
+          },
+          {
+            "id": 7,
+            "title": "Document the API endpoint",
+            "description": "Create documentation for the league creation API endpoint.",
+            "dependencies": [
+              "2.5"
+            ],
+            "details": "Document the POST /leagues endpoint including: 1) Required and optional request parameters, 2) Validation rules, 3) Response format, 4) Example requests and responses, and 5) Potential error codes and messages.",
+            "status": "pending",
+            "testStrategy": "Verify documentation accuracy by comparing with the implemented endpoint. Ensure all parameters, responses, and error cases are correctly documented."
+          }
+        ]
       },
       {
         "id": 3,
@@ -37,7 +202,103 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define API endpoint structure and validation rules",
+            "description": "Define the structure of the POST /leagues/{joinToken}/join endpoint and establish validation rules for input parameters.",
+            "dependencies": [],
+            "details": "Create the endpoint structure that accepts a joinToken path parameter and a display name in the request body. Define validation rules for the display name (required, minimum/maximum length, allowed characters). Document the expected request and response formats.",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify validation rules for the display name parameter. Test with valid and invalid input formats."
+          },
+          {
+            "id": 2,
+            "title": "Implement joinToken validation logic",
+            "description": "Create logic to validate that the provided joinToken exists and is associated with a league in 'setup' status.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Query the database to find a league with the provided joinToken. Verify that the league exists and is in 'setup' status. Create appropriate error responses for invalid tokens and leagues that have already started.",
+            "status": "pending",
+            "testStrategy": "Test validation with valid tokens, non-existent tokens, and tokens for leagues that are not in 'setup' status."
+          },
+          {
+            "id": 3,
+            "title": "Implement league capacity check",
+            "description": "Create logic to verify that the league is not at maximum capacity before allowing a new team to join.",
+            "dependencies": [
+              "3.2"
+            ],
+            "details": "Count the number of existing teams in the league and compare against the league's maxTeams setting. Return an appropriate error if the league is at capacity.",
+            "status": "pending",
+            "testStrategy": "Test joining leagues with various team counts, including edge cases (empty league, one team away from capacity, at capacity)."
+          },
+          {
+            "id": 4,
+            "title": "Implement team creation logic",
+            "description": "Create logic to add a new team to the league with the provided display name.",
+            "dependencies": [
+              "3.3"
+            ],
+            "details": "Create a new Team record in the database with the provided display name, associated with the league. Generate any necessary team identifiers or metadata. Set appropriate default values for team attributes.",
+            "status": "pending",
+            "testStrategy": "Test team creation with various display names. Verify that all required team attributes are properly set."
+          },
+          {
+            "id": 5,
+            "title": "Implement response formatting",
+            "description": "Format the API response to return success with the team information.",
+            "dependencies": [
+              "3.4"
+            ],
+            "details": "Structure the response to include the newly created team information, including team ID, display name, league information, and any other relevant data. Format the response according to the API standards.",
+            "status": "pending",
+            "testStrategy": "Test that the response contains all required team information and follows the expected format."
+          },
+          {
+            "id": 6,
+            "title": "Implement comprehensive error handling",
+            "description": "Implement detailed error handling for all possible error scenarios.",
+            "dependencies": [
+              "3.2",
+              "3.3",
+              "3.4",
+              "3.5"
+            ],
+            "details": "Create standardized error responses for: invalid join token, league already started (status != 'setup'), league at capacity, missing or invalid display name. Ensure error messages are clear and actionable for the client.",
+            "status": "pending",
+            "testStrategy": "Test each error scenario to verify appropriate error codes and messages are returned. Test edge cases for each validation rule."
+          },
+          {
+            "id": 7,
+            "title": "Integrate with WebSocket notifications",
+            "description": "Integrate the join endpoint with WebSocket notifications to broadcast team joins in real-time.",
+            "dependencies": [
+              "3.5"
+            ],
+            "details": "After successfully creating a team, broadcast a notification to all connected clients for the league that a new team has joined. Include relevant team information in the notification.",
+            "status": "pending",
+            "testStrategy": "Test that WebSocket notifications are sent when a team joins. Verify the notification contains the correct team information."
+          },
+          {
+            "id": 8,
+            "title": "Write integration tests",
+            "description": "Create comprehensive integration tests for the complete join flow.",
+            "dependencies": [
+              "3.1",
+              "3.2",
+              "3.3",
+              "3.4",
+              "3.5",
+              "3.6",
+              "3.7"
+            ],
+            "details": "Write integration tests that verify the complete join flow from request to response, including database updates and WebSocket notifications. Test both successful joins and various error scenarios.",
+            "status": "pending",
+            "testStrategy": "Test the complete join flow with valid parameters. Test all error scenarios. Verify database state after successful joins."
+          }
+        ]
       },
       {
         "id": 4,
@@ -51,7 +312,122 @@
           3
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Celebrity data model",
+            "description": "Define the data structure for storing celebrities in the draft pool",
+            "dependencies": [],
+            "details": "Create a Celebrity model with fields for id, name, normalizedName (for case-insensitive comparison), leagueId, teamId (who added it), and createdAt timestamp. Ensure the model supports efficient querying by name and pagination.",
+            "status": "pending",
+            "testStrategy": "Verify the model can store all required fields and supports the necessary query patterns."
+          },
+          {
+            "id": 2,
+            "title": "Implement name normalization utility",
+            "description": "Create a utility function to normalize celebrity names for comparison",
+            "dependencies": [],
+            "details": "Implement a function that trims whitespace, converts to lowercase, and handles any special characters for consistent comparison. This will be used to detect duplicates regardless of case or spacing differences.",
+            "status": "pending",
+            "testStrategy": "Test with various input formats including mixed case, extra spaces, and special characters to ensure consistent normalization."
+          },
+          {
+            "id": 3,
+            "title": "Implement POST endpoint for adding celebrities",
+            "description": "Create the API endpoint to add a new celebrity to a league's draft pool",
+            "dependencies": [
+              "4.1",
+              "4.2"
+            ],
+            "details": "Implement POST /leagues/{leagueId}/celebrities endpoint that accepts a request with celebrity name and team ID. Apply name normalization, check for duplicates using case-insensitive comparison, and store the new celebrity with the team ID of who added it. Return appropriate success or error responses.",
+            "status": "pending",
+            "testStrategy": "Test adding valid celebrities, test duplicate detection with different casing and whitespace, test error handling for invalid inputs."
+          },
+          {
+            "id": 4,
+            "title": "Implement duplicate detection logic",
+            "description": "Create logic to detect duplicate celebrity names regardless of case or whitespace",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Using the normalization utility, implement a function to check if a celebrity with the same normalized name already exists in the league's draft pool. This should be case-insensitive and ignore whitespace differences.",
+            "status": "pending",
+            "testStrategy": "Test with variations of the same name (different case, extra spaces) to verify duplicate detection works correctly."
+          },
+          {
+            "id": 5,
+            "title": "Implement GET endpoint for retrieving celebrities",
+            "description": "Create the API endpoint to retrieve all celebrities in a league's draft pool",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Implement GET /leagues/{leagueId}/celebrities endpoint with pagination support (limit and offset parameters) and text search by name. The endpoint should return a list of celebrities with their IDs, names, and the team that added them.",
+            "status": "pending",
+            "testStrategy": "Test pagination works correctly, test search functionality with partial name matches, test with empty results and full results."
+          },
+          {
+            "id": 6,
+            "title": "Implement pagination for celebrity retrieval",
+            "description": "Add pagination support to the celebrity retrieval endpoint",
+            "dependencies": [
+              "4.5"
+            ],
+            "details": "Enhance the GET endpoint to support limit and offset parameters for pagination. Include total count in the response to allow clients to implement pagination controls. Default to a reasonable page size if not specified.",
+            "status": "pending",
+            "testStrategy": "Test different page sizes, test navigating through multiple pages, test edge cases like requesting beyond available data."
+          },
+          {
+            "id": 7,
+            "title": "Implement text search for celebrities",
+            "description": "Add text search capability to the celebrity retrieval endpoint",
+            "dependencies": [
+              "4.5"
+            ],
+            "details": "Enhance the GET endpoint to support a search parameter that filters celebrities by name. The search should be case-insensitive and match partial names. Optimize the query for performance with larger datasets.",
+            "status": "pending",
+            "testStrategy": "Test searching with exact matches, partial matches, case variations, and no matches. Test performance with larger datasets."
+          },
+          {
+            "id": 8,
+            "title": "Implement input validation and error handling",
+            "description": "Add comprehensive validation and error handling to both endpoints",
+            "dependencies": [
+              "4.3",
+              "4.5"
+            ],
+            "details": "Implement validation for all input parameters including leagueId, celebrity name, and pagination parameters. Return appropriate HTTP status codes and error messages for various error conditions including invalid inputs, duplicate celebrities, and not found errors.",
+            "status": "pending",
+            "testStrategy": "Test all validation rules with valid and invalid inputs. Test all error conditions to ensure appropriate status codes and messages are returned."
+          },
+          {
+            "id": 9,
+            "title": "Integrate with WebSocket notifications",
+            "description": "Add WebSocket event broadcasting when a new celebrity is added",
+            "dependencies": [
+              "4.3"
+            ],
+            "details": "When a new celebrity is successfully added to the draft pool, broadcast an event via WebSocket to all connected clients for that league. Include the celebrity details and the team that added it in the event payload.",
+            "status": "pending",
+            "testStrategy": "Test that WebSocket events are properly broadcast when celebrities are added. Verify the event payload contains all necessary information."
+          },
+          {
+            "id": 10,
+            "title": "Write integration tests",
+            "description": "Create comprehensive integration tests for the celebrity management API",
+            "dependencies": [
+              "4.3",
+              "4.4",
+              "4.5",
+              "4.6",
+              "4.7",
+              "4.8",
+              "4.9"
+            ],
+            "details": "Implement integration tests that cover the complete flow of adding and retrieving celebrities, including duplicate detection, pagination, and search functionality. Test the API endpoints in isolation and as part of the broader application flow.",
+            "status": "pending",
+            "testStrategy": "Test the complete flow from adding celebrities to retrieving them with various parameters. Test integration with other components like WebSockets."
+          }
+        ]
       },
       {
         "id": 5,
@@ -66,7 +442,121 @@
           3
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create endpoint structure and route definition",
+            "description": "Set up the basic structure for the POST /leagues/{leagueId}/start-draft endpoint",
+            "dependencies": [],
+            "details": "Define the route in the API router, create the controller method, and set up the basic request validation middleware. Ensure the endpoint accepts the leagueId parameter and is properly connected to the controller.",
+            "status": "pending",
+            "testStrategy": "Test that the endpoint exists and returns appropriate responses for basic request formats."
+          },
+          {
+            "id": 2,
+            "title": "Implement commissioner verification",
+            "description": "Add logic to verify that the requester is the commissioner (first team to join the league)",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Query the database to find the first team that joined the league and compare it with the requester's team ID. Return a 403 Forbidden error if the requester is not the commissioner.",
+            "status": "pending",
+            "testStrategy": "Test with both commissioner and non-commissioner requests to verify proper authorization checks."
+          },
+          {
+            "id": 3,
+            "title": "Implement team count validation",
+            "description": "Add logic to check if the league has at least 2 teams before starting the draft",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Query the database to count the number of teams in the league. Return a 400 Bad Request error if there are fewer than 2 teams.",
+            "status": "pending",
+            "testStrategy": "Test with leagues having 0, 1, 2, and more teams to verify proper validation."
+          },
+          {
+            "id": 4,
+            "title": "Implement league status update",
+            "description": "Add logic to update the league status from 'setup' to 'drafting'",
+            "dependencies": [
+              "5.2",
+              "5.3"
+            ],
+            "details": "Update the league record in the database to change its status from 'setup' to 'drafting'. Include validation to ensure the league is currently in 'setup' status.",
+            "status": "pending",
+            "testStrategy": "Test that the status is correctly updated and that appropriate errors are returned if the league is not in 'setup' status."
+          },
+          {
+            "id": 5,
+            "title": "Implement draft order randomization",
+            "description": "Add logic to randomly assign draft positions to all teams in the league",
+            "dependencies": [
+              "5.4"
+            ],
+            "details": "Retrieve all teams in the league, randomize their order, and assign draft positions. Store the draft positions in the database. Ensure the randomization is truly random and unbiased.",
+            "status": "pending",
+            "testStrategy": "Test that draft positions are assigned to all teams and that the distribution appears random across multiple test runs."
+          },
+          {
+            "id": 6,
+            "title": "Implement snake draft pattern calculation",
+            "description": "Create logic to calculate the full draft order following a snake pattern across 5 rounds",
+            "dependencies": [
+              "5.5"
+            ],
+            "details": "Based on the randomized team positions, calculate the complete draft order for all 5 rounds following a snake pattern (e.g., rounds 1, 3, 5 go in order, rounds 2, 4 go in reverse order). Store this information in the database.",
+            "status": "pending",
+            "testStrategy": "Test that the snake pattern is correctly implemented by verifying the order of picks in each round."
+          },
+          {
+            "id": 7,
+            "title": "Implement response formatting",
+            "description": "Format and return the draft order in the API response",
+            "dependencies": [
+              "5.6"
+            ],
+            "details": "Structure the API response to include the complete draft order information, showing which team picks in which position for each round. Include relevant team information in the response.",
+            "status": "pending",
+            "testStrategy": "Test that the response format is correct and contains all necessary information about the draft order."
+          },
+          {
+            "id": 8,
+            "title": "Implement transaction handling",
+            "description": "Wrap all database operations in a transaction to ensure data consistency",
+            "dependencies": [
+              "5.4",
+              "5.5",
+              "5.6"
+            ],
+            "details": "Use database transactions to ensure that all operations (status update, draft position assignment, etc.) either complete successfully or roll back entirely in case of errors.",
+            "status": "pending",
+            "testStrategy": "Test error scenarios to verify that the database remains in a consistent state."
+          },
+          {
+            "id": 9,
+            "title": "Implement lock for new joins",
+            "description": "Add logic to prevent new teams from joining after the draft has started",
+            "dependencies": [
+              "5.4"
+            ],
+            "details": "Modify the team join endpoint to check the league status and reject new join requests if the league is in 'drafting' status.",
+            "status": "pending",
+            "testStrategy": "Test that new teams cannot join a league after the draft has started."
+          },
+          {
+            "id": 10,
+            "title": "Write integration tests",
+            "description": "Create comprehensive integration tests for the draft start API",
+            "dependencies": [
+              "5.7",
+              "5.8",
+              "5.9"
+            ],
+            "details": "Write tests that cover the entire flow of starting a draft, including all validation rules, error cases, and successful execution. Test with various league configurations.",
+            "status": "pending",
+            "testStrategy": "Run integration tests against a test database to verify the complete functionality of the draft start API."
+          }
+        ]
       },
       {
         "id": 6,
@@ -81,7 +571,121 @@
           5
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design API endpoint structure",
+            "description": "Define the structure and parameters for the POST /leagues/{leagueId}/picks endpoint",
+            "dependencies": [],
+            "details": "Create a detailed specification for the API endpoint including request parameters, headers, authentication requirements, and response format. Define the JSON schema for both request and response objects.",
+            "status": "pending",
+            "testStrategy": "Review the API design against REST best practices and ensure it aligns with existing API patterns in the application."
+          },
+          {
+            "id": 2,
+            "title": "Implement turn validation logic",
+            "description": "Create logic to validate that it's the requesting team's turn to make a draft pick",
+            "dependencies": [
+              "6.1"
+            ],
+            "details": "Develop a function that determines the current team's turn based on the snake draft pattern and the number of picks already made. This should account for the draft order randomization that happens when the draft starts. Ensure the requesting team matches the team whose turn it currently is.",
+            "status": "pending",
+            "testStrategy": "Test with various draft positions, round numbers, and team counts to verify the snake pattern works correctly. Test edge cases like first pick, last pick of a round, and first pick of a new round."
+          },
+          {
+            "id": 3,
+            "title": "Implement celebrity validation",
+            "description": "Create logic to validate that the selected celebrity exists and hasn't been picked already",
+            "dependencies": [
+              "6.1"
+            ],
+            "details": "Query the database to verify the celebrityId exists in the celebrity pool. Then check that this celebrity hasn't already been selected in a previous pick for this league. Return appropriate error messages if validation fails.",
+            "status": "pending",
+            "testStrategy": "Test with valid celebrities, non-existent celebrities, and already-picked celebrities. Verify appropriate error messages are returned."
+          },
+          {
+            "id": 4,
+            "title": "Implement draft pick creation",
+            "description": "Create logic to record a new DraftPick with the correct round and overall pick numbers",
+            "dependencies": [
+              "6.2",
+              "6.3"
+            ],
+            "details": "Calculate the current round number and overall pick number based on the number of picks already made and the number of teams. Create a new DraftPick record in the database with the appropriate leagueId, teamId, celebrityId, round number, and overall pick number.",
+            "status": "pending",
+            "testStrategy": "Test that pick numbers are calculated correctly for various scenarios. Verify the database record is created with all required fields."
+          },
+          {
+            "id": 5,
+            "title": "Implement server-side locking mechanism",
+            "description": "Create a locking mechanism to prevent concurrent picks for the same draft position",
+            "dependencies": [],
+            "details": "Implement a database-level locking mechanism (e.g., using transactions or a dedicated lock table) to ensure that only one pick can be processed at a time for a given league. The lock should be acquired before validating the turn and released after the pick is recorded.",
+            "status": "pending",
+            "testStrategy": "Test concurrent pick attempts to verify that only one succeeds and others receive appropriate error messages. Test lock release on both successful picks and failed validation."
+          },
+          {
+            "id": 6,
+            "title": "Implement draft state response",
+            "description": "Create logic to return the updated draft state after a successful pick",
+            "dependencies": [
+              "6.4"
+            ],
+            "details": "After recording a pick, query the database to construct a comprehensive draft state object including: current picks, draft order, current team's turn, remaining picks, and draft status. Format this data according to the API response schema.",
+            "status": "pending",
+            "testStrategy": "Verify the response includes all required information. Test at different stages of the draft to ensure the state is accurate."
+          },
+          {
+            "id": 7,
+            "title": "Integrate with WebSocket notifications",
+            "description": "Add code to broadcast the pick event via WebSockets to all connected clients",
+            "dependencies": [
+              "6.6"
+            ],
+            "details": "After a successful pick is recorded, trigger a WebSocket event to notify all connected clients about the new pick. Include sufficient data in the event payload for clients to update their state without requiring a full refresh.",
+            "status": "pending",
+            "testStrategy": "Test that WebSocket events are properly triggered after picks. Verify the payload contains all necessary information."
+          },
+          {
+            "id": 8,
+            "title": "Implement draft completion detection",
+            "description": "Add logic to detect when the draft is complete and update the league status",
+            "dependencies": [
+              "6.4"
+            ],
+            "details": "After recording a pick, check if this was the final pick of the draft (based on picksPerTeam and number of teams). If so, update the league status from 'drafting' to 'complete'.",
+            "status": "pending",
+            "testStrategy": "Test that the league status is updated correctly after the final pick. Test with different league sizes to verify the completion detection works correctly."
+          },
+          {
+            "id": 9,
+            "title": "Create API endpoint controller",
+            "description": "Implement the actual API endpoint controller that ties together all the validation and processing logic",
+            "dependencies": [
+              "6.2",
+              "6.3",
+              "6.4",
+              "6.5",
+              "6.6",
+              "6.7",
+              "6.8"
+            ],
+            "details": "Create the controller function that handles the POST request to /leagues/{leagueId}/picks. This should authenticate the request, call the validation and processing functions, handle errors appropriately, and return the response.",
+            "status": "pending",
+            "testStrategy": "Test the complete API flow with various scenarios including successful picks and all error cases. Verify appropriate HTTP status codes are returned."
+          },
+          {
+            "id": 10,
+            "title": "Write comprehensive tests",
+            "description": "Create unit and integration tests for the draft pick API",
+            "dependencies": [
+              "6.9"
+            ],
+            "details": "Write unit tests for each component of the draft pick logic. Write integration tests that verify the complete flow from request to response. Include tests for error scenarios and edge cases.",
+            "status": "pending",
+            "testStrategy": "Test making valid picks. Test invalid scenarios: wrong turn, already picked celebrity, non-existent celebrity. Test the complete draft flow from first to last pick. Test concurrent pick attempts to verify locking mechanism works correctly."
+          }
+        ]
       },
       {
         "id": 7,
@@ -95,7 +699,103 @@
           6
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design database schema for draft state and recap",
+            "description": "Define the database schema needed to support the draft state and recap API endpoints",
+            "dependencies": [],
+            "details": "Create or update database models to track draft state including current pick, draft status, and team rosters. Ensure the schema can efficiently support queries for both the draft-state and recap endpoints.",
+            "status": "pending",
+            "testStrategy": "Create unit tests to verify the database schema correctly models the draft state and supports all required queries."
+          },
+          {
+            "id": 2,
+            "title": "Implement draft status tracking logic",
+            "description": "Create logic to track and update draft status (setup/drafting/complete)",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Implement logic to track the draft status and transition between states. The draft should be marked complete when all teams have made their 5 picks. Include validation to ensure proper state transitions.",
+            "status": "pending",
+            "testStrategy": "Test state transitions through the complete draft lifecycle. Verify the draft is correctly marked as complete when all teams have made their 5 picks."
+          },
+          {
+            "id": 3,
+            "title": "Implement current pick and up-next calculation",
+            "description": "Create logic to calculate the current pick, up-next, and round/overall indicators",
+            "dependencies": [
+              "7.1",
+              "7.2"
+            ],
+            "details": "Implement algorithms to determine the current pick, the next pick, and calculate round/overall pick numbers based on the snake draft pattern and the number of picks already made.",
+            "status": "pending",
+            "testStrategy": "Test the calculation logic with various league sizes and at different points in the draft to ensure correct pick order is maintained."
+          },
+          {
+            "id": 4,
+            "title": "Implement GET /leagues/{leagueId}/draft-state endpoint",
+            "description": "Create API endpoint to retrieve the current draft state",
+            "dependencies": [
+              "7.1",
+              "7.2",
+              "7.3"
+            ],
+            "details": "Implement the GET /leagues/{leagueId}/draft-state endpoint that returns the current draft state including current pick, up-next, round/overall indicators, all teams with their draft positions and current rosters, and draft status.",
+            "status": "pending",
+            "testStrategy": "Test retrieving draft state at different stages (setup, during draft, completed). Verify the response includes all required information and is correctly formatted."
+          },
+          {
+            "id": 5,
+            "title": "Implement GET /leagues/{leagueId}/recap endpoint",
+            "description": "Create API endpoint to retrieve the post-draft recap",
+            "dependencies": [
+              "7.1",
+              "7.2"
+            ],
+            "details": "Implement the GET /leagues/{leagueId}/recap endpoint that returns the final rosters by team and the overall draft order with all picks. This endpoint should only return complete data when the draft is in 'complete' status.",
+            "status": "pending",
+            "testStrategy": "Test the recap endpoint after draft completion to ensure it shows the correct final state. Test behavior when accessed before draft completion."
+          },
+          {
+            "id": 6,
+            "title": "Implement data serialization for API responses",
+            "description": "Create serializers/formatters for the draft state and recap API responses",
+            "dependencies": [
+              "7.4",
+              "7.5"
+            ],
+            "details": "Implement data serialization to format the API responses consistently. Ensure all required fields are included and properly formatted according to the API specification.",
+            "status": "pending",
+            "testStrategy": "Test serialization with various data scenarios to ensure consistent output format."
+          },
+          {
+            "id": 7,
+            "title": "Implement API documentation",
+            "description": "Document the draft state and recap API endpoints",
+            "dependencies": [
+              "7.4",
+              "7.5",
+              "7.6"
+            ],
+            "details": "Create comprehensive API documentation for the draft state and recap endpoints, including request parameters, response format, and example responses.",
+            "status": "pending",
+            "testStrategy": "Verify documentation accuracy by comparing with actual API responses."
+          },
+          {
+            "id": 8,
+            "title": "Implement integration tests",
+            "description": "Create integration tests for the draft state and recap API endpoints",
+            "dependencies": [
+              "7.4",
+              "7.5",
+              "7.6"
+            ],
+            "details": "Implement integration tests that verify the complete flow from league creation through draft completion, testing both endpoints at various stages of the draft.",
+            "status": "pending",
+            "testStrategy": "Test the complete draft flow from setup to completion, verifying both endpoints return correct data at each stage."
+          }
+        ]
       },
       {
         "id": 8,
@@ -111,7 +811,150 @@
           7
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design WebSocket Server Architecture",
+            "description": "Design the architecture for the WebSocket server including connection management, event types, and data structures.",
+            "dependencies": [],
+            "details": "Create a detailed design document that outlines: WebSocket connection lifecycle, event types and payloads for each event (team joins, celebrity additions, draft picks, status changes), connection pooling per league, and reconnection strategy. Define the interface between the WebSocket server and the existing API endpoints.",
+            "status": "pending",
+            "testStrategy": "Review the design with team members to ensure it meets all requirements. Create sequence diagrams to validate the flow of events."
+          },
+          {
+            "id": 2,
+            "title": "Set Up WebSocket Server Infrastructure",
+            "description": "Set up the WebSocket server infrastructure with appropriate libraries and connection handling.",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Select and implement an appropriate WebSocket library (e.g., Socket.IO, ws). Configure the server to accept connections, handle authentication, and manage connection state. Implement connection pooling by league ID to ensure messages are only sent to relevant clients.",
+            "status": "pending",
+            "testStrategy": "Test basic connection establishment, authentication, and disconnection scenarios. Verify that connections are properly grouped by league."
+          },
+          {
+            "id": 3,
+            "title": "Implement League Join Event Broadcasting",
+            "description": "Implement the functionality to broadcast events when a new team joins a league.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Modify the team join API endpoint to emit WebSocket events when a new team successfully joins a league. The event should include team details (ID, name) and updated league information. Ensure the event is broadcast to all connected clients in the specific league.",
+            "status": "pending",
+            "testStrategy": "Test that when a new team joins, all connected clients receive the update within 5 seconds. Test with multiple simultaneous connections to verify broadcast functionality."
+          },
+          {
+            "id": 4,
+            "title": "Implement Celebrity Addition Event Broadcasting",
+            "description": "Implement the functionality to broadcast events when a new celebrity is added to the pool.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Modify the celebrity addition API endpoint to emit WebSocket events when a new celebrity is added to the pool. The event should include celebrity details (ID, name, category) and be broadcast to all connected clients in the affected league.",
+            "status": "pending",
+            "testStrategy": "Test that when a new celebrity is added, all connected clients receive the update within 5 seconds. Verify that the celebrity data is complete and correctly formatted."
+          },
+          {
+            "id": 5,
+            "title": "Implement Draft Pick Event Broadcasting",
+            "description": "Implement the functionality to broadcast events when a draft pick is made.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Modify the draft pick API endpoint to emit WebSocket events when a team makes a draft pick. The event should include pick details (team, celebrity, round, pick number) and updated draft state. Ensure the event is broadcast to all connected clients in the specific league.",
+            "status": "pending",
+            "testStrategy": "Test that when a draft pick is made, all connected clients receive the update within 5 seconds. Test the complete draft flow to ensure all picks are properly broadcast."
+          },
+          {
+            "id": 6,
+            "title": "Implement Draft Status Change Event Broadcasting",
+            "description": "Implement the functionality to broadcast events when the draft status changes.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Modify the draft start API and any other endpoints that change draft status to emit WebSocket events. The event should include the new status and any relevant state changes (e.g., draft order when starting). Ensure the event is broadcast to all connected clients in the specific league.",
+            "status": "pending",
+            "testStrategy": "Test status changes from 'setup' to 'drafting' to 'completed' and verify all connected clients receive the updates within 5 seconds."
+          },
+          {
+            "id": 7,
+            "title": "Implement Client-Side WebSocket Connection",
+            "description": "Implement the client-side code to establish and maintain WebSocket connections.",
+            "dependencies": [
+              "8.2"
+            ],
+            "details": "Create a WebSocket client service that connects to the server, handles authentication, and processes incoming events. Implement event listeners for different event types and update the UI accordingly. Ensure the connection is established when a user joins or views a league.",
+            "status": "pending",
+            "testStrategy": "Test connection establishment, event reception, and UI updates. Verify that the client can handle all event types correctly."
+          },
+          {
+            "id": 8,
+            "title": "Implement Reconnection Logic",
+            "description": "Implement robust reconnection logic for both server and client.",
+            "dependencies": [
+              "8.2",
+              "8.7"
+            ],
+            "details": "Implement exponential backoff reconnection strategy on the client side. Handle reconnection scenarios on the server side, including re-joining the correct league channel. Implement a mechanism to catch up on missed events during disconnection periods.",
+            "status": "pending",
+            "testStrategy": "Test reconnection by simulating network interruptions. Verify that clients can reconnect and receive missed events. Test with various disconnection durations."
+          },
+          {
+            "id": 9,
+            "title": "Implement Fallback Polling Mechanism",
+            "description": "Implement a fallback to short polling if WebSockets are not available.",
+            "dependencies": [
+              "8.7"
+            ],
+            "details": "Create a polling mechanism that activates when WebSocket connections fail. The polling should request updates at 2-5 second intervals from a dedicated API endpoint. Implement the server-side endpoint to return recent events since the client's last known state.",
+            "status": "pending",
+            "testStrategy": "Test the fallback mechanism by disabling WebSockets. Verify that updates are still received through polling. Measure the latency to ensure it meets the 5-second requirement."
+          },
+          {
+            "id": 10,
+            "title": "Optimize Performance and Scalability",
+            "description": "Optimize the WebSocket server for performance and scalability.",
+            "dependencies": [
+              "8.2",
+              "8.3",
+              "8.4",
+              "8.5",
+              "8.6"
+            ],
+            "details": "Implement connection limits per league. Optimize message payloads to reduce bandwidth. Implement server-side caching of recent events for reconnection scenarios. Consider horizontal scaling options for the WebSocket server.",
+            "status": "pending",
+            "testStrategy": "Perform load testing with simulated concurrent users. Measure message delivery latency under load. Test with large leagues (maximum 20 teams) to ensure performance remains acceptable."
+          },
+          {
+            "id": 11,
+            "title": "Implement Comprehensive Testing",
+            "description": "Implement comprehensive testing for the WebSocket functionality.",
+            "dependencies": [
+              "8.3",
+              "8.4",
+              "8.5",
+              "8.6",
+              "8.7",
+              "8.8",
+              "8.9"
+            ],
+            "details": "Create unit tests for WebSocket event handling. Implement integration tests for the complete flow from API actions to WebSocket events. Create end-to-end tests that simulate real user scenarios. Implement latency measurements to verify the 5-second propagation requirement.",
+            "status": "pending",
+            "testStrategy": "Run automated tests in CI/CD pipeline. Perform manual testing with multiple browsers and devices. Test edge cases like simultaneous events and connection limits."
+          },
+          {
+            "id": 12,
+            "title": "Create Documentation and Monitoring",
+            "description": "Create documentation for the WebSocket API and implement monitoring.",
+            "dependencies": [
+              "8.10",
+              "8.11"
+            ],
+            "details": "Document the WebSocket event types, payloads, and expected behaviors. Create client integration examples. Implement monitoring for WebSocket connections, message delivery latency, and error rates. Set up alerts for performance degradation.",
+            "status": "pending",
+            "testStrategy": "Review documentation with team members. Verify that monitoring captures all relevant metrics and alerts function correctly."
+          }
+        ]
       },
       {
         "id": 9,
@@ -124,7 +967,101 @@
           2
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design League Creation Form Component",
+            "description": "Create a responsive form component for league creation with name input and team size selector",
+            "dependencies": [],
+            "details": "Implement a form component with: 1) League name input field with validation, 2) Max teams selector (2-20) with default of 8 using a dropdown or slider, 3) Create button with loading state, 4) Form validation to ensure name is provided and team count is valid",
+            "status": "pending",
+            "testStrategy": "Test form validation for empty name, invalid team counts. Test responsive design on mobile, tablet, and desktop. Verify default values are correctly set."
+          },
+          {
+            "id": 2,
+            "title": "Implement League Creation API Integration",
+            "description": "Connect the league creation form to the backend API and handle responses",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "Implement API integration that: 1) Sends form data to backend on submission, 2) Handles loading states during API call, 3) Processes API response to extract league details and joinToken, 4) Implements error handling for network issues or validation errors, 5) Redirects to invite screen on successful creation",
+            "status": "pending",
+            "testStrategy": "Test successful API calls and redirection. Test error handling for various API error responses. Test network failure scenarios."
+          },
+          {
+            "id": 3,
+            "title": "Design League Invite Screen Component",
+            "description": "Create a responsive UI for displaying league details and invite link after creation",
+            "dependencies": [
+              "9.2"
+            ],
+            "details": "Implement an invite screen with: 1) League name and details display, 2) Prominently displayed invite link with the joinToken, 3) Copy button with feedback on successful copy, 4) Teams joined counter showing current/maximum, 5) Visual indicator of commissioner status, 6) Start draft button (visible only to commissioner)",
+            "status": "pending",
+            "testStrategy": "Test copy functionality works across browsers. Test responsive design. Verify commissioner-only elements are properly conditionally rendered."
+          },
+          {
+            "id": 4,
+            "title": "Implement Real-time Updates for League Invite Screen",
+            "description": "Add real-time functionality to update the teams joined counter as new users join",
+            "dependencies": [
+              "9.3"
+            ],
+            "details": "Implement real-time updates using: 1) WebSocket connection or polling mechanism to get team join events, 2) Update teams joined counter in real-time without page refresh, 3) Add visual feedback when new teams join, 4) Handle connection issues gracefully",
+            "status": "pending",
+            "testStrategy": "Test real-time updates with multiple browser sessions. Test reconnection logic if connection is lost. Verify counter updates correctly as teams join."
+          },
+          {
+            "id": 5,
+            "title": "Implement Start Draft Functionality",
+            "description": "Add functionality for the commissioner to start the draft when ready",
+            "dependencies": [
+              "9.3",
+              "9.4"
+            ],
+            "details": "Implement start draft functionality: 1) Enable start draft button only when minimum number of teams have joined, 2) Show confirmation dialog before starting, 3) Send API request to start draft, 4) Handle loading state during API call, 5) Redirect all participants to draft board on successful start",
+            "status": "pending",
+            "testStrategy": "Test button enabled/disabled states based on team count. Test confirmation dialog. Test successful start and redirection. Test error handling for start draft failures."
+          },
+          {
+            "id": 6,
+            "title": "Implement Local Storage for League and User Data",
+            "description": "Store league and user information in local storage to maintain session state",
+            "dependencies": [
+              "9.2",
+              "9.3"
+            ],
+            "details": "Implement local storage functionality: 1) Store league ID, name, and joinToken after creation, 2) Store user's role (commissioner or participant), 3) Implement utility functions to get/set this data, 4) Add logic to check for existing league data on page load",
+            "status": "pending",
+            "testStrategy": "Test persistence across page refreshes. Test data retrieval functions. Verify correct role identification from stored data."
+          },
+          {
+            "id": 7,
+            "title": "Create Mobile-Responsive Design for All Components",
+            "description": "Ensure all UI components work well on mobile, tablet, and desktop devices",
+            "dependencies": [
+              "9.1",
+              "9.3"
+            ],
+            "details": "Implement responsive design: 1) Use flexbox/grid layouts for adaptability, 2) Optimize form inputs for touch on mobile, 3) Ensure invite link is easily copyable on mobile, 4) Test and adjust layouts for various screen sizes, 5) Implement mobile-specific UI improvements where needed",
+            "status": "pending",
+            "testStrategy": "Test on various device sizes and orientations. Verify touch interactions work properly on mobile. Test copy functionality on mobile browsers."
+          },
+          {
+            "id": 8,
+            "title": "Implement Error Handling and User Feedback",
+            "description": "Add comprehensive error handling and user feedback throughout the league creation and invite flow",
+            "dependencies": [
+              "9.1",
+              "9.2",
+              "9.3",
+              "9.4",
+              "9.5"
+            ],
+            "details": "Implement error handling: 1) Form validation errors with clear messages, 2) API error handling with user-friendly messages, 3) Network error detection and retry options, 4) Loading states with spinners or skeletons, 5) Success notifications for key actions",
+            "status": "pending",
+            "testStrategy": "Test all error scenarios including form validation, API errors, and network failures. Verify error messages are clear and actionable. Test loading state displays."
+          }
+        ]
       },
       {
         "id": 10,
@@ -138,7 +1075,100 @@
           9
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Join Screen UI Components",
+            "description": "Create the UI components for the join screen including league name display, display name input, and join button.",
+            "dependencies": [],
+            "details": "Design and implement React components for the join screen. Include a header displaying the league name, an input field for the user's display name with validation, and a prominent join button. Ensure the UI is responsive and follows the application's design system.",
+            "status": "pending",
+            "testStrategy": "Test the component rendering with various screen sizes. Verify input validation for display name. Test accessibility of all UI elements."
+          },
+          {
+            "id": 2,
+            "title": "Implement Error State UI Components",
+            "description": "Create UI components for displaying error states including invalid invite link, league full, and league already started scenarios.",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Design and implement error state components that clearly communicate the issue to the user. Each error state should have a distinct message and potentially a different visual treatment. Include options for users to retry or navigate elsewhere as appropriate.",
+            "status": "pending",
+            "testStrategy": "Test each error state display. Verify that error messages are clear and actionable. Test that error components render correctly on different devices."
+          },
+          {
+            "id": 3,
+            "title": "Create Invite Link Validation Logic",
+            "description": "Implement the logic to validate invite links and handle different validation scenarios.",
+            "dependencies": [],
+            "details": "Create functions to parse and validate invite links. The validation should check if the link format is correct and if it contains a valid league ID. This logic will be used to determine if the join screen or an error state should be displayed.",
+            "status": "pending",
+            "testStrategy": "Test validation with valid links, malformed links, and links with invalid league IDs. Test edge cases like empty strings or very long inputs."
+          },
+          {
+            "id": 4,
+            "title": "Implement API Integration for Join Flow",
+            "description": "Connect the join UI to backend APIs for validating leagues and joining teams.",
+            "dependencies": [
+              "10.1",
+              "10.3"
+            ],
+            "details": "Implement API calls to validate the league status (exists, not full, not started) and to join the league with the user's display name. Handle API responses appropriately, including success cases and various error scenarios.",
+            "status": "pending",
+            "testStrategy": "Test API integration with mocked responses for success and various error cases. Test retry logic and error handling for network failures."
+          },
+          {
+            "id": 5,
+            "title": "Implement Local Storage for Team Information",
+            "description": "Create functionality to store and retrieve team information in local storage after successful join.",
+            "dependencies": [
+              "10.4"
+            ],
+            "details": "Implement functions to save team information (team ID, display name, league ID) to local storage after a successful join. Create utility functions to retrieve this information for maintaining the user's session without authentication.",
+            "status": "pending",
+            "testStrategy": "Test storage and retrieval of team information. Test with various browsers. Test edge cases like storage limits and clearing browser data."
+          },
+          {
+            "id": 6,
+            "title": "Implement Redirect to Pre-Draft Lobby",
+            "description": "Create the logic to redirect users to the pre-draft lobby after successfully joining a league.",
+            "dependencies": [
+              "10.4",
+              "10.5"
+            ],
+            "details": "Implement the navigation logic to redirect users to the pre-draft lobby page after successfully joining a league. Ensure that the necessary team information is available in the new page context.",
+            "status": "pending",
+            "testStrategy": "Test the redirect flow after successful join. Verify that team information is correctly passed to or available in the pre-draft lobby."
+          },
+          {
+            "id": 7,
+            "title": "Create Integration Tests for Join Flow",
+            "description": "Develop comprehensive integration tests for the entire join flow from invite link to pre-draft lobby.",
+            "dependencies": [
+              "10.1",
+              "10.2",
+              "10.3",
+              "10.4",
+              "10.5",
+              "10.6"
+            ],
+            "details": "Create end-to-end tests that cover the complete join flow, including all success and error scenarios. Test the flow from receiving an invite link to successfully joining and being redirected to the pre-draft lobby.",
+            "status": "pending",
+            "testStrategy": "Use a testing framework like Cypress to test the full user journey. Test all error states and the successful flow. Verify local storage persistence across page navigation."
+          },
+          {
+            "id": 8,
+            "title": "Implement Responsive Design for Join UI",
+            "description": "Ensure the join flow UI is fully responsive and works well on mobile devices.",
+            "dependencies": [
+              "10.1",
+              "10.2"
+            ],
+            "details": "Optimize the join flow UI for various screen sizes, particularly focusing on mobile devices. Ensure that input fields, buttons, and error messages are appropriately sized and positioned for touch interaction.",
+            "status": "pending",
+            "testStrategy": "Test the UI on various device sizes and orientations. Verify touch interactions work correctly on mobile devices. Test with different browsers on mobile platforms."
+          }
+        ]
       },
       {
         "id": 11,
@@ -153,7 +1183,110 @@
           10
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Celebrity Pool UI Layout",
+            "description": "Create the layout and component structure for the celebrity pool UI",
+            "dependencies": [],
+            "details": "Design a responsive layout for the celebrity pool that includes sections for the celebrity list, search input, and add form. Define component hierarchy, state management approach, and styling guidelines.",
+            "status": "pending",
+            "testStrategy": "Verify layout responsiveness across different screen sizes. Ensure all required UI elements are present and properly positioned."
+          },
+          {
+            "id": 2,
+            "title": "Implement Celebrity List Component",
+            "description": "Create a component to display the list of available celebrities in the draft pool",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Develop a component that renders a scrollable list of celebrities with appropriate styling. Each celebrity item should display the name and potentially other relevant information. Include pagination or infinite scrolling if the list becomes large.",
+            "status": "pending",
+            "testStrategy": "Test rendering with various numbers of celebrities. Test scrolling behavior. Verify correct display of celebrity information."
+          },
+          {
+            "id": 3,
+            "title": "Implement Search Functionality",
+            "description": "Create a search input component that filters the celebrity list in real-time",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Implement a text input field that filters the celebrity list as the user types. The search should be case-insensitive and match partial names. Include clear button and appropriate styling for the search input.",
+            "status": "pending",
+            "testStrategy": "Test search with various inputs including partial matches, case variations, and special characters. Verify the list updates in real-time as the user types."
+          },
+          {
+            "id": 4,
+            "title": "Create Add Celebrity Form",
+            "description": "Implement a form for adding new celebrities to the draft pool",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Create a form with input field(s) for celebrity name and potentially other attributes. Include a submit button and appropriate styling. The form should be accessible and follow best practices for form design.",
+            "status": "pending",
+            "testStrategy": "Test form submission with valid and invalid inputs. Verify form validation feedback. Test accessibility of the form."
+          },
+          {
+            "id": 5,
+            "title": "Implement Client-Side Validation",
+            "description": "Add validation logic to prevent submission of duplicate or invalid celebrity names",
+            "dependencies": [
+              "11.4"
+            ],
+            "details": "Implement client-side validation that checks for duplicate names (case-insensitive, accounting for whitespace) before submission. Add validation for other requirements such as minimum length or character restrictions. Provide clear feedback to users when validation fails.",
+            "status": "pending",
+            "testStrategy": "Test validation with exact duplicates, case variations, and whitespace differences. Test validation error messages are clear and helpful."
+          },
+          {
+            "id": 6,
+            "title": "Implement Error State UI",
+            "description": "Create UI components for displaying error states",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Design and implement error state displays for duplicate celebrity names and network errors. Error messages should be clear, user-friendly, and provide guidance on how to resolve the issue. Include appropriate styling and potentially animations for error states.",
+            "status": "pending",
+            "testStrategy": "Test error displays with various error messages. Verify error states are visually distinct and provide clear guidance."
+          },
+          {
+            "id": 7,
+            "title": "Implement Real-Time Updates",
+            "description": "Add functionality to update the celebrity list in real-time when other users add celebrities",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Integrate with the real-time update system (likely WebSockets) to receive notifications when other users add celebrities. Update the UI accordingly without requiring a page refresh. Include visual indicators for newly added celebrities.",
+            "status": "pending",
+            "testStrategy": "Test real-time updates with multiple simulated users. Verify the UI updates correctly when new celebrities are added by others."
+          },
+          {
+            "id": 8,
+            "title": "Integrate with Backend API",
+            "description": "Connect the UI components to the backend API for fetching and adding celebrities",
+            "dependencies": [
+              "11.2",
+              "11.3",
+              "11.4",
+              "11.5",
+              "11.6",
+              "11.7"
+            ],
+            "details": "Implement API calls to fetch the list of celebrities, search celebrities, and add new celebrities. Handle loading states, error handling, and response processing. Ensure proper error handling for network issues and server errors.",
+            "status": "pending",
+            "testStrategy": "Test API integration with mock responses for success and error cases. Verify loading states are displayed appropriately. Test error handling for various network and server error scenarios."
+          },
+          {
+            "id": 9,
+            "title": "Implement Final UI Polish and Optimization",
+            "description": "Finalize styling, animations, and performance optimizations",
+            "dependencies": [
+              "11.8"
+            ],
+            "details": "Apply final styling touches, add transitions and animations where appropriate. Optimize performance by implementing lazy loading, memoization, or other techniques as needed. Ensure the UI is fully responsive and accessible.",
+            "status": "pending",
+            "testStrategy": "Test performance with large datasets. Verify animations and transitions work smoothly. Test accessibility compliance. Conduct final cross-browser and cross-device testing."
+          }
+        ]
       },
       {
         "id": 12,
@@ -168,7 +1301,149 @@
           11
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Draft Board Layout Component",
+            "description": "Implement the main layout component for the draft board that will contain all other subcomponents",
+            "dependencies": [],
+            "details": "Create a responsive container component that will house the draft order display, team panels, and other draft board elements. Include grid or flex layout structure to organize the various sections of the draft board.",
+            "status": "pending",
+            "testStrategy": "Test responsive behavior across different screen sizes. Verify that the layout maintains proper structure on mobile, tablet, and desktop views."
+          },
+          {
+            "id": 2,
+            "title": "Implement Draft Order Display Component",
+            "description": "Create a component to display the draft order with team positions",
+            "dependencies": [
+              "12.1"
+            ],
+            "details": "Develop a component that shows the sequential draft order with team names and positions. Include visual indicators for the current round and overall pick number. Ensure the component can handle different league sizes (8-14 teams).",
+            "status": "pending",
+            "testStrategy": "Test with various league sizes to ensure proper display. Verify that the draft order correctly updates as rounds progress."
+          },
+          {
+            "id": 3,
+            "title": "Build Current Pick Indicator Component",
+            "description": "Create a component that highlights the team currently making a selection",
+            "dependencies": [
+              "12.2"
+            ],
+            "details": "Implement a visually distinct indicator that clearly shows which team is currently on the clock. Include animations or visual effects to draw attention to the current picking team. Display the time remaining if applicable.",
+            "status": "pending",
+            "testStrategy": "Test that the current pick indicator properly updates when teams change. Verify that the visual distinction is clear and accessible."
+          },
+          {
+            "id": 4,
+            "title": "Develop Up-Next Indicator Component",
+            "description": "Create a component showing which teams are coming up next in the draft order",
+            "dependencies": [
+              "12.3"
+            ],
+            "details": "Build a component that displays the next 2-3 teams in the draft order. Include visual styling that makes it clear these teams are on deck but not currently picking.",
+            "status": "pending",
+            "testStrategy": "Test that the up-next indicator correctly updates as picks are made. Verify the component handles edge cases like the end of rounds correctly."
+          },
+          {
+            "id": 5,
+            "title": "Implement Team Panel Components",
+            "description": "Create individual team panels showing team information and roster",
+            "dependencies": [
+              "12.1"
+            ],
+            "details": "Develop team panel components that display team name, draft position, and current roster (up to 5 picks). Include empty slots for future picks. Design the panels to be compact yet informative.",
+            "status": "pending",
+            "testStrategy": "Test panels with various numbers of picks (0-5). Verify that team information is displayed correctly and that the panels update properly when new picks are made."
+          },
+          {
+            "id": 6,
+            "title": "Create Visual Indicators for Team States",
+            "description": "Implement visual indicators for user's team, current picking team, and completed teams",
+            "dependencies": [
+              "12.5"
+            ],
+            "details": "Add visual styling to distinguish between different team states: the user's own team, the team currently picking, and teams that have completed their draft. Use color coding, borders, or other visual elements to make these distinctions clear.",
+            "status": "pending",
+            "testStrategy": "Test all possible team states to ensure proper visual indicators. Verify that the indicators are accessible and meet color contrast requirements."
+          },
+          {
+            "id": 7,
+            "title": "Implement Round and Overall Pick Indicators",
+            "description": "Create components to display the current round and overall pick number",
+            "dependencies": [
+              "12.2"
+            ],
+            "details": "Develop indicators that show the current round (e.g., 'Round 3 of 5') and the overall pick number (e.g., 'Pick 27 of 60'). Position these indicators prominently on the draft board.",
+            "status": "pending",
+            "testStrategy": "Test that the round and pick indicators update correctly as the draft progresses. Verify correct calculations for different league sizes and round structures."
+          },
+          {
+            "id": 8,
+            "title": "Implement Realtime Update Functionality",
+            "description": "Add functionality to update the draft board UI in realtime as picks are made",
+            "dependencies": [
+              "12.3",
+              "12.5",
+              "12.6",
+              "12.7"
+            ],
+            "details": "Integrate with the backend to receive realtime updates when picks are made. Update all relevant components (current pick indicator, team rosters, round/pick indicators) when new data is received. Implement smooth transitions or animations for updates.",
+            "status": "pending",
+            "testStrategy": "Test realtime updates with simulated pick events. Verify that all components update correctly and simultaneously. Test edge cases like rapid consecutive picks."
+          },
+          {
+            "id": 9,
+            "title": "Create Draft Board State Management",
+            "description": "Implement state management for the draft board to maintain consistent data across components",
+            "dependencies": [
+              "12.1",
+              "12.2",
+              "12.3",
+              "12.4",
+              "12.5"
+            ],
+            "details": "Set up state management (using Redux, Context API, or similar) to maintain the draft state across all components. Include state for draft order, current pick, team rosters, and other relevant data. Ensure proper data flow between components.",
+            "status": "pending",
+            "testStrategy": "Test state updates with various actions. Verify that all components receive the correct state updates. Test that the state remains consistent across the application."
+          },
+          {
+            "id": 10,
+            "title": "Implement Responsive Design for Draft Board",
+            "description": "Ensure the draft board UI is responsive and works well on different screen sizes",
+            "dependencies": [
+              "12.1",
+              "12.5"
+            ],
+            "details": "Adapt the draft board layout for different screen sizes. On smaller screens, consider using a more compact layout, collapsible sections, or horizontal scrolling for certain elements. Ensure all critical information remains visible and accessible.",
+            "status": "pending",
+            "testStrategy": "Test on various device sizes from mobile to desktop. Verify that all information remains accessible and that the UI remains usable on smaller screens."
+          },
+          {
+            "id": 11,
+            "title": "Add Loading and Error States",
+            "description": "Implement loading indicators and error handling for the draft board UI",
+            "dependencies": [
+              "12.8",
+              "12.9"
+            ],
+            "details": "Create loading states for when the draft board is initializing or updating. Implement error handling for network issues or other failures. Include user-friendly error messages and retry options where appropriate.",
+            "status": "pending",
+            "testStrategy": "Test loading states during initialization and updates. Test error handling by simulating network failures and other error conditions. Verify that error messages are clear and helpful."
+          },
+          {
+            "id": 12,
+            "title": "Integrate with Other Frontend Components",
+            "description": "Integrate the draft board with other related UI components",
+            "dependencies": [
+              "12.8",
+              "12.9",
+              "12.11"
+            ],
+            "details": "Connect the draft board UI with other frontend components like the Draft Pick UI (Task 13) and Celebrity Management UI (Task 11). Ensure proper data flow and interaction between these components.",
+            "status": "pending",
+            "testStrategy": "Test the integration points between the draft board and other components. Verify that actions in one component correctly affect the state in other components."
+          }
+        ]
       },
       {
         "id": 13,
@@ -183,7 +1458,146 @@
           12
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Available Celebrities List Component",
+            "description": "Create a component to display the list of available celebrities for drafting",
+            "dependencies": [],
+            "details": "Design and implement a scrollable list component that displays available celebrities. Include name, relevant stats/info, and visual indicators for selection. Ensure the list updates dynamically as celebrities are picked by other teams.",
+            "status": "pending",
+            "testStrategy": "Test rendering with various numbers of celebrities. Test filtering and sorting. Verify visual updates when celebrities become unavailable."
+          },
+          {
+            "id": 2,
+            "title": "Implement Celebrity Search Functionality",
+            "description": "Create a search input that filters the available celebrities list in real-time",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Add a search input that filters the celebrities list as the user types. Implement client-side filtering by name and potentially other attributes. Include clear button and empty state display when no results match.",
+            "status": "pending",
+            "testStrategy": "Test search with partial matches, case insensitivity, and special characters. Test empty state display. Test performance with large lists."
+          },
+          {
+            "id": 3,
+            "title": "Create Pick Button and Selection Confirmation",
+            "description": "Implement the button for confirming a draft pick and any confirmation dialogs",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Create a prominent 'Draft' button that activates when a celebrity is selected. Include a confirmation dialog to prevent accidental picks. Design the button states for enabled, disabled, loading, and success.",
+            "status": "pending",
+            "testStrategy": "Test button state transitions. Test confirmation dialog. Test accessibility for keyboard navigation and screen readers."
+          },
+          {
+            "id": 4,
+            "title": "Implement Current Turn Indicator",
+            "description": "Create a visual indicator showing whose turn it is to draft",
+            "dependencies": [],
+            "details": "Design and implement a prominent indicator showing the current drafting team. Include visual cues when it's the user's turn vs. other teams' turns. Add a timer if applicable to the draft rules.",
+            "status": "pending",
+            "testStrategy": "Test visibility of the indicator. Test state changes between turns. Test timer functionality if implemented."
+          },
+          {
+            "id": 5,
+            "title": "Develop Error State for 'Not Your Turn'",
+            "description": "Create UI elements to handle and display errors when a user attempts to draft out of turn",
+            "dependencies": [
+              "13.3",
+              "13.4"
+            ],
+            "details": "Implement error handling for when users attempt to make picks when it's not their turn. Include clear visual feedback and helpful messaging. Ensure the pick UI is disabled when not the user's turn.",
+            "status": "pending",
+            "testStrategy": "Test error display when attempting to draft out of turn. Test that the UI is properly disabled. Test error message clarity."
+          },
+          {
+            "id": 6,
+            "title": "Develop Error State for 'Celebrity Already Picked'",
+            "description": "Create UI elements to handle and display errors when a user attempts to draft a celebrity that's already been selected",
+            "dependencies": [
+              "13.3"
+            ],
+            "details": "Implement error handling for when users attempt to pick a celebrity that has already been drafted. Include clear visual feedback and helpful messaging. Ensure already-picked celebrities are visually distinct in the list.",
+            "status": "pending",
+            "testStrategy": "Test error display when attempting to draft an already-picked celebrity. Test that already-picked celebrities are properly marked or filtered out."
+          },
+          {
+            "id": 7,
+            "title": "Develop Error State for Network Errors",
+            "description": "Create UI elements to handle and display network-related errors during the draft process",
+            "dependencies": [
+              "13.3"
+            ],
+            "details": "Implement error handling for network issues during the draft process. Include retry mechanisms, clear error messages, and recovery options. Ensure the UI remains responsive during network operations.",
+            "status": "pending",
+            "testStrategy": "Test error display during network failures. Test retry functionality. Test recovery after connection is restored."
+          },
+          {
+            "id": 8,
+            "title": "Implement Optimistic UI Updates with Rollback",
+            "description": "Create a system for updating the UI immediately upon user action, with the ability to roll back if errors occur",
+            "dependencies": [
+              "13.3",
+              "13.5",
+              "13.6",
+              "13.7"
+            ],
+            "details": "Implement optimistic UI updates that show the pick immediately in the user's roster before server confirmation. Create rollback mechanisms for when errors occur. Ensure smooth transitions between states.",
+            "status": "pending",
+            "testStrategy": "Test optimistic updates when making picks. Test rollback functionality for various error scenarios. Test user experience during the process."
+          },
+          {
+            "id": 9,
+            "title": "Implement Real-time Updates for Other Teams' Picks",
+            "description": "Create functionality to update the UI in real-time when other teams make their picks",
+            "dependencies": [
+              "13.1",
+              "13.4"
+            ],
+            "details": "Implement real-time updates using WebSockets or polling to reflect other teams' picks immediately. Update the available celebrities list, draft board, and turn indicator without requiring page refresh.",
+            "status": "pending",
+            "testStrategy": "Test real-time updates when other teams make picks. Test handling of concurrent picks. Test recovery after connection interruptions."
+          },
+          {
+            "id": 10,
+            "title": "Integrate Draft Pick UI with Backend API",
+            "description": "Connect the draft pick UI components to the backend API endpoints",
+            "dependencies": [
+              "13.3",
+              "13.8",
+              "13.9"
+            ],
+            "details": "Integrate the draft pick UI with the backend API for submitting picks, retrieving available celebrities, and subscribing to real-time updates. Implement proper error handling and loading states.",
+            "status": "pending",
+            "testStrategy": "Test API integration with mock and real endpoints. Test error handling for various API response scenarios. Test performance under realistic conditions."
+          },
+          {
+            "id": 11,
+            "title": "Create Responsive Layout for Draft Pick UI",
+            "description": "Ensure the draft pick UI works well on various screen sizes and devices",
+            "dependencies": [
+              "13.1",
+              "13.2",
+              "13.3",
+              "13.4"
+            ],
+            "details": "Implement responsive design for the draft pick UI that works well on desktop, tablet, and mobile devices. Ensure all critical functions are accessible and usable on smaller screens.",
+            "status": "pending",
+            "testStrategy": "Test on various screen sizes and devices. Test touch interactions on mobile. Test layout adjustments at different breakpoints."
+          },
+          {
+            "id": 12,
+            "title": "Implement Accessibility Features",
+            "description": "Ensure the draft pick UI is accessible to users with disabilities",
+            "dependencies": [
+              "13.11"
+            ],
+            "details": "Implement accessibility features including keyboard navigation, screen reader support, sufficient color contrast, and focus management. Ensure all interactive elements have appropriate ARIA attributes.",
+            "status": "pending",
+            "testStrategy": "Test with keyboard navigation. Test with screen readers. Test color contrast. Verify ARIA attributes are correctly implemented."
+          }
+        ]
       },
       {
         "id": 14,
@@ -197,7 +1611,156 @@
           13
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Recap UI Layout",
+            "description": "Create wireframes and design mockups for the post-draft recap UI",
+            "dependencies": [],
+            "details": "Design a clean, readable layout for the recap page that includes sections for final rosters by team, complete draft order, and league summary statistics. Consider responsive design for different screen sizes. Include navigation elements between different recap views.",
+            "status": "pending",
+            "testStrategy": "Review designs with stakeholders. Ensure the layout accommodates various league sizes and roster configurations."
+          },
+          {
+            "id": 2,
+            "title": "Implement Final Rosters Component",
+            "description": "Create a component to display final rosters by team after draft completion",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Develop a component that displays each team's final roster, including player names, draft positions, and any relevant statistics. Implement sorting options to view rosters in different orders (e.g., by draft order, alphabetically).",
+            "status": "pending",
+            "testStrategy": "Test with various team sizes. Verify correct display of all roster information. Test sorting functionality."
+          },
+          {
+            "id": 3,
+            "title": "Implement Complete Draft Order Component",
+            "description": "Create a component to display the complete draft order with all picks made",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Develop a component that shows the entire draft order, including round numbers, pick numbers, team names, and selected celebrities. Implement filtering and sorting options for better usability.",
+            "status": "pending",
+            "testStrategy": "Test with different draft sizes. Verify correct display of all picks. Test filtering and sorting options."
+          },
+          {
+            "id": 4,
+            "title": "Implement League Summary Statistics Component",
+            "description": "Create a component to display league-wide statistics after draft completion",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Develop a component that calculates and displays league summary statistics such as average pick time, most popular celebrity categories, teams with fastest/slowest picks, etc. Include visualizations like charts or graphs where appropriate.",
+            "status": "pending",
+            "testStrategy": "Test with various draft data sets. Verify accuracy of statistical calculations. Test responsive behavior of visualizations."
+          },
+          {
+            "id": 5,
+            "title": "Implement Navigation Between Recap Views",
+            "description": "Create navigation controls to switch between different recap views",
+            "dependencies": [
+              "14.1",
+              "14.2",
+              "14.3",
+              "14.4"
+            ],
+            "details": "Implement tab-based or button-based navigation to allow users to switch between different recap views (rosters, draft order, statistics). Ensure the navigation is intuitive and maintains state when switching between views.",
+            "status": "pending",
+            "testStrategy": "Test navigation between all views. Verify state preservation when switching views. Test keyboard accessibility."
+          },
+          {
+            "id": 6,
+            "title": "Connect Recap UI to Backend Data",
+            "description": "Integrate the recap UI components with backend API endpoints",
+            "dependencies": [
+              "14.2",
+              "14.3",
+              "14.4"
+            ],
+            "details": "Connect the recap UI components to the appropriate backend API endpoints to fetch final draft data, rosters, and statistics. Implement proper loading states and error handling for API requests.",
+            "status": "pending",
+            "testStrategy": "Test API integration with various response scenarios. Test loading states and error handling. Verify data is correctly displayed from API responses."
+          },
+          {
+            "id": 7,
+            "title": "Implement Access Control for Recap View",
+            "description": "Ensure the recap view is only accessible after draft completion",
+            "dependencies": [
+              "14.6"
+            ],
+            "details": "Implement logic to check if the draft is complete before allowing access to the recap view. Redirect users to appropriate screens if they attempt to access the recap before draft completion.",
+            "status": "pending",
+            "testStrategy": "Test access control with various draft states. Verify redirects work correctly for incomplete drafts."
+          },
+          {
+            "id": 8,
+            "title": "Create Print/Export Functionality",
+            "description": "Implement functionality to print or export the draft recap",
+            "dependencies": [
+              "14.2",
+              "14.3",
+              "14.4"
+            ],
+            "details": "Add buttons and functionality to allow users to print the recap or export it in common formats (PDF, CSV). Ensure the printed/exported version is well-formatted and includes all relevant information.",
+            "status": "pending",
+            "testStrategy": "Test print preview functionality. Test export to different formats. Verify formatting of exported documents."
+          },
+          {
+            "id": 9,
+            "title": "Implement Responsive Design for Recap UI",
+            "description": "Ensure the recap UI works well on different screen sizes",
+            "dependencies": [
+              "14.2",
+              "14.3",
+              "14.4",
+              "14.5"
+            ],
+            "details": "Optimize the recap UI components for various screen sizes and devices. Implement responsive layouts that reorganize content appropriately for mobile, tablet, and desktop views.",
+            "status": "pending",
+            "testStrategy": "Test on various device sizes and orientations. Verify all content is accessible and readable on small screens."
+          },
+          {
+            "id": 10,
+            "title": "Add Social Sharing Options",
+            "description": "Implement functionality to share draft results on social media",
+            "dependencies": [
+              "14.6"
+            ],
+            "details": "Add buttons and functionality to allow users to share draft results on social media platforms. Generate appropriate preview content and links for sharing.",
+            "status": "pending",
+            "testStrategy": "Test sharing functionality with various social platforms. Verify preview content is generated correctly."
+          },
+          {
+            "id": 11,
+            "title": "Implement End-to-End Testing for Recap UI",
+            "description": "Create comprehensive end-to-end tests for the recap UI",
+            "dependencies": [
+              "14.2",
+              "14.3",
+              "14.4",
+              "14.5",
+              "14.6",
+              "14.7",
+              "14.8",
+              "14.9",
+              "14.10"
+            ],
+            "details": "Develop end-to-end tests that verify the complete functionality of the recap UI, including data loading, navigation, and user interactions. Test with various draft scenarios and edge cases.",
+            "status": "pending",
+            "testStrategy": "Create automated tests for all user flows. Test with various data sets including edge cases. Verify all components work together correctly."
+          },
+          {
+            "id": 12,
+            "title": "Optimize Performance for Large Drafts",
+            "description": "Ensure the recap UI performs well with large draft data",
+            "dependencies": [
+              "14.6"
+            ],
+            "details": "Optimize the performance of the recap UI when displaying large amounts of data. Implement pagination, virtualization, or other techniques to handle large leagues efficiently.",
+            "status": "pending",
+            "testStrategy": "Test with large draft data sets. Measure and optimize load times and rendering performance. Test scrolling performance with large lists."
+          }
+        ]
       },
       {
         "id": 15,
@@ -212,7 +1775,184 @@
           14
         ],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Toast Notification System",
+            "description": "Create a reusable toast notification system that can display error messages, warnings, and success notifications to users.",
+            "dependencies": [],
+            "details": "Develop a toast notification component that can be triggered from anywhere in the application. Include different styles for error, warning, success, and info messages. Ensure notifications are dismissible, have appropriate timeouts, and are accessible. Position them consistently in the UI (typically top-right corner).",
+            "status": "pending",
+            "testStrategy": "Test different notification types. Verify proper styling, timeout behavior, and dismissal functionality. Test accessibility features including screen reader compatibility."
+          },
+          {
+            "id": 2,
+            "title": "Implement WebSocket Reconnection Logic",
+            "description": "Create a robust WebSocket connection manager with exponential backoff reconnection strategy.",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Implement a WebSocket connection manager that handles disconnections gracefully. Use exponential backoff algorithm starting with a short delay (e.g., 500ms) and increasing up to a maximum (e.g., 30 seconds). Track connection state and attempt count. Reset backoff after successful reconnection. Include jitter to prevent thundering herd problems in case of server issues.",
+            "status": "pending",
+            "testStrategy": "Test reconnection with various network interruption scenarios. Verify backoff timing increases appropriately. Test successful reconnection resets the backoff timer. Test maximum retry behavior."
+          },
+          {
+            "id": 3,
+            "title": "Add Manual Refresh Button for Disconnected State",
+            "description": "Implement a manual refresh button that appears when the application detects a disconnection from the server.",
+            "dependencies": [
+              "15.2"
+            ],
+            "details": "Create a UI component that appears when WebSocket connection is lost. The button should trigger a manual reconnection attempt and refresh relevant data. Position it prominently in the UI when needed. Include appropriate loading states during reconnection attempts.",
+            "status": "pending",
+            "testStrategy": "Test button appearance on disconnection. Verify reconnection flow works when button is clicked. Test loading states during reconnection process."
+          },
+          {
+            "id": 4,
+            "title": "Implement Offline State Indicator",
+            "description": "Create a visual indicator that shows when the application is in offline mode and cannot connect to the server.",
+            "dependencies": [
+              "15.2"
+            ],
+            "details": "Develop a persistent visual indicator (banner or icon) that appears when the application is offline. Use the browser's navigator.onLine property and listen for 'online' and 'offline' events. Combine this with WebSocket connection status for more accurate offline detection. Update the UI accordingly when connection status changes.",
+            "status": "pending",
+            "testStrategy": "Test indicator appearance in offline scenarios. Verify it disappears when connection is restored. Test with both browser offline events and WebSocket disconnection scenarios."
+          },
+          {
+            "id": 5,
+            "title": "Implement API Error Handling Middleware",
+            "description": "Create middleware to standardize error handling across all API endpoints.",
+            "dependencies": [],
+            "details": "Develop server-side middleware that catches errors from API routes and formats them consistently. Include error codes, user-friendly messages, and detailed information for logging. Handle different error types (validation errors, not found, unauthorized, server errors) appropriately. Ensure sensitive error details aren't exposed to clients in production.",
+            "status": "pending",
+            "testStrategy": "Test error handling for various error types. Verify correct status codes and response formats. Test that sensitive information is not leaked in production mode."
+          },
+          {
+            "id": 6,
+            "title": "Implement Client-Side Error Boundary",
+            "description": "Add React Error Boundary components to prevent the entire application from crashing when component errors occur.",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Create Error Boundary components to catch JavaScript errors in the component tree. Implement fallback UIs that show when errors occur. Include options to retry or reset the affected components. Log errors to a monitoring service. Place boundaries strategically to isolate critical sections of the application.",
+            "status": "pending",
+            "testStrategy": "Test error boundaries with deliberately failing components. Verify fallback UI appears correctly. Test recovery mechanisms like retry functionality."
+          },
+          {
+            "id": 7,
+            "title": "Implement API Rate Limiting",
+            "description": "Add rate limiting to API endpoints to prevent abuse and ensure fair usage.",
+            "dependencies": [
+              "15.5"
+            ],
+            "details": "Implement rate limiting middleware for API endpoints. Use a sliding window algorithm with Redis or an in-memory store. Set appropriate limits for different endpoints (e.g., stricter limits for authentication endpoints). Return 429 Too Many Requests with Retry-After headers when limits are exceeded. Include rate limit information in response headers.",
+            "status": "pending",
+            "testStrategy": "Test rate limiting by making rapid requests. Verify 429 responses after limits are exceeded. Test Retry-After headers. Verify rate limits reset after the specified window."
+          },
+          {
+            "id": 8,
+            "title": "Implement Idempotent API Operations",
+            "description": "Modify API endpoints to handle duplicate requests safely through idempotency keys.",
+            "dependencies": [
+              "15.5",
+              "15.7"
+            ],
+            "details": "Implement idempotency for critical write operations, particularly draft picks and league creation. Use client-generated idempotency keys in request headers. Store processed requests with their results temporarily (e.g., 24 hours). Return cached results for duplicate requests with the same idempotency key. Ensure database transactions are used appropriately to prevent partial updates.",
+            "status": "pending",
+            "testStrategy": "Test duplicate requests with the same idempotency key return identical responses. Verify database state is consistent after duplicate requests. Test idempotency key expiration behavior."
+          },
+          {
+            "id": 9,
+            "title": "Implement Offline Data Caching",
+            "description": "Add client-side caching to allow basic application functionality when offline.",
+            "dependencies": [
+              "15.4"
+            ],
+            "details": "Implement client-side caching using IndexedDB or localStorage. Cache critical data like league details and draft state. Implement a synchronization mechanism to update server when connection is restored. Show appropriate indicators for cached vs. live data. Handle conflicts that may arise during synchronization.",
+            "status": "pending",
+            "testStrategy": "Test application behavior when offline. Verify cached data is displayed correctly. Test synchronization when connection is restored. Test conflict resolution strategies."
+          },
+          {
+            "id": 10,
+            "title": "Implement Network Status Monitoring Service",
+            "description": "Create a service to monitor and report on network connectivity and API health.",
+            "dependencies": [
+              "15.2",
+              "15.4"
+            ],
+            "details": "Develop a service that monitors network status using a combination of navigator.onLine, periodic health check pings, and WebSocket connection status. Provide a unified API for components to subscribe to network status changes. Include detailed status information (connected, connecting, disconnected, offline) and reason for disconnection when available.",
+            "status": "pending",
+            "testStrategy": "Test status reporting under various network conditions. Verify subscribers are notified of status changes. Test recovery detection and notification."
+          },
+          {
+            "id": 11,
+            "title": "Add Comprehensive Error Logging",
+            "description": "Implement client-side and server-side error logging to capture and report application errors.",
+            "dependencies": [
+              "15.5",
+              "15.6"
+            ],
+            "details": "Set up error logging infrastructure for both client and server. Capture JavaScript errors, API errors, and WebSocket issues. Include contextual information like user ID, session ID, and application state. Implement log levels (debug, info, warn, error) and appropriate filtering. Consider integration with a monitoring service like Sentry or LogRocket.",
+            "status": "pending",
+            "testStrategy": "Test error capturing for various error types. Verify contextual information is included. Test that sensitive information is properly scrubbed from logs."
+          },
+          {
+            "id": 12,
+            "title": "Implement Graceful API Timeout Handling",
+            "description": "Add timeout handling for API requests with appropriate user feedback.",
+            "dependencies": [
+              "15.1",
+              "15.5"
+            ],
+            "details": "Implement timeout handling for all API requests. Set appropriate timeout thresholds based on operation type. Show loading indicators for in-progress requests. Provide clear feedback when requests timeout. Implement retry mechanisms with exponential backoff for important operations.",
+            "status": "pending",
+            "testStrategy": "Test timeout behavior by simulating slow responses. Verify timeout messages are displayed correctly. Test retry functionality works as expected."
+          },
+          {
+            "id": 13,
+            "title": "Create Network Resilience Documentation",
+            "description": "Document the error handling and network resilience features for developers and support teams.",
+            "dependencies": [
+              "15.1",
+              "15.2",
+              "15.3",
+              "15.4",
+              "15.5",
+              "15.6",
+              "15.7",
+              "15.8",
+              "15.9",
+              "15.10",
+              "15.11",
+              "15.12"
+            ],
+            "details": "Create comprehensive documentation covering all implemented error handling and network resilience features. Include error codes and their meanings, retry strategies, rate limiting details, and troubleshooting guides. Document how to test network resilience features. Create diagrams showing the flow of error handling and recovery processes.",
+            "status": "pending",
+            "testStrategy": "Review documentation with team members to ensure clarity and completeness. Verify all implemented features are properly documented."
+          },
+          {
+            "id": 14,
+            "title": "Implement Integration Tests for Network Resilience",
+            "description": "Create comprehensive integration tests to verify all network resilience features work together correctly.",
+            "dependencies": [
+              "15.1",
+              "15.2",
+              "15.3",
+              "15.4",
+              "15.5",
+              "15.6",
+              "15.7",
+              "15.8",
+              "15.9",
+              "15.10",
+              "15.11",
+              "15.12"
+            ],
+            "details": "Develop integration tests that simulate various network failure scenarios: disconnections, slow responses, server errors, and more. Test the complete user flow under these conditions. Verify that the application recovers gracefully and maintains data integrity. Test combinations of failure modes to ensure robust handling.",
+            "status": "pending",
+            "testStrategy": "Use network throttling and service mocking to simulate various failure conditions. Test complete user journeys under degraded network conditions. Verify data integrity is maintained throughout."
+          }
+        ]
       }
     ],
     "metadata": {
