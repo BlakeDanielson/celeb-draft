@@ -116,15 +116,6 @@
         "status": "pending",
         "subtasks": [
           {
-            "id": 1,
-            "title": "Define League model and database schema",
-            "description": "Create the League model with all required fields including name, maxTeams, picksPerTeam, joinToken, and status.",
-            "dependencies": [],
-            "details": "Define a League model with the following fields: id (primary key), name (required string), maxTeams (integer, 2-20, default 8), picksPerTeam (fixed value of 5), joinToken (string, unique), status (enum: 'setup', 'drafting', 'completed'), createdAt, and updatedAt timestamps. Ensure proper validation constraints are set at the database level.",
-            "status": "pending",
-            "testStrategy": "Write unit tests to verify the model constraints and validation rules. Test that default values are correctly applied."
-          },
-          {
             "id": 2,
             "title": "Implement joinToken generation function",
             "description": "Create a utility function to generate secure, unguessable joinTokens for leagues.",
@@ -147,7 +138,6 @@
             "title": "Implement POST /leagues endpoint handler",
             "description": "Create the API endpoint handler that processes league creation requests and returns the created league.",
             "dependencies": [
-              "2.1",
               "2.2",
               "2.3"
             ],
@@ -366,28 +356,6 @@
             "testStrategy": "Test pagination works correctly, test search functionality with partial name matches, test with empty results and full results."
           },
           {
-            "id": 6,
-            "title": "Implement pagination for celebrity retrieval",
-            "description": "Add pagination support to the celebrity retrieval endpoint",
-            "dependencies": [
-              "4.5"
-            ],
-            "details": "Enhance the GET endpoint to support limit and offset parameters for pagination. Include total count in the response to allow clients to implement pagination controls. Default to a reasonable page size if not specified.",
-            "status": "pending",
-            "testStrategy": "Test different page sizes, test navigating through multiple pages, test edge cases like requesting beyond available data."
-          },
-          {
-            "id": 7,
-            "title": "Implement text search for celebrities",
-            "description": "Add text search capability to the celebrity retrieval endpoint",
-            "dependencies": [
-              "4.5"
-            ],
-            "details": "Enhance the GET endpoint to support a search parameter that filters celebrities by name. The search should be case-insensitive and match partial names. Optimize the query for performance with larger datasets.",
-            "status": "pending",
-            "testStrategy": "Test searching with exact matches, partial matches, case variations, and no matches. Test performance with larger datasets."
-          },
-          {
             "id": 8,
             "title": "Implement input validation and error handling",
             "description": "Add comprehensive validation and error handling to both endpoints",
@@ -418,8 +386,6 @@
               "4.3",
               "4.4",
               "4.5",
-              "4.6",
-              "4.7",
               "4.8",
               "4.9"
             ],
@@ -814,145 +780,48 @@
         "subtasks": [
           {
             "id": 1,
-            "title": "Design WebSocket Server Architecture",
-            "description": "Design the architecture for the WebSocket server including connection management, event types, and data structures.",
-            "dependencies": [],
-            "details": "Create a detailed design document that outlines: WebSocket connection lifecycle, event types and payloads for each event (team joins, celebrity additions, draft picks, status changes), connection pooling per league, and reconnection strategy. Define the interface between the WebSocket server and the existing API endpoints.",
+            "title": "Implement short polling for updates (≤5s)",
+            "description": "Replace WebSockets with a simple polling mechanism (2–3s) for joins, celebrity additions, and picks; provide a single service for polling endpoints and notifying UI.",
+            "details": "",
             "status": "pending",
-            "testStrategy": "Review the design with team members to ensure it meets all requirements. Create sequence diagrams to validate the flow of events."
+            "dependencies": [],
+            "parentTaskId": 8
           },
           {
             "id": 2,
-            "title": "Set Up WebSocket Server Infrastructure",
-            "description": "Set up the WebSocket server infrastructure with appropriate libraries and connection handling.",
-            "dependencies": [
-              "8.1"
-            ],
-            "details": "Select and implement an appropriate WebSocket library (e.g., Socket.IO, ws). Configure the server to accept connections, handle authentication, and manage connection state. Implement connection pooling by league ID to ensure messages are only sent to relevant clients.",
+            "title": "Add ETag/Last-Modified support on GET endpoints",
+            "description": "Support conditional requests to reduce payloads during polling; return 304 when unchanged.",
+            "details": "",
             "status": "pending",
-            "testStrategy": "Test basic connection establishment, authentication, and disconnection scenarios. Verify that connections are properly grouped by league."
+            "dependencies": [],
+            "parentTaskId": 8
           },
           {
             "id": 3,
-            "title": "Implement League Join Event Broadcasting",
-            "description": "Implement the functionality to broadcast events when a new team joins a league.",
-            "dependencies": [
-              "8.2"
-            ],
-            "details": "Modify the team join API endpoint to emit WebSocket events when a new team successfully joins a league. The event should include team details (ID, name) and updated league information. Ensure the event is broadcast to all connected clients in the specific league.",
+            "title": "Implement polling-friendly draft state endpoint",
+            "description": "Expose a single `GET /leagues/{leagueId}/draft-state` that includes current teams, order, current pick, and lastUpdated timestamp for efficient polling.",
+            "details": "",
             "status": "pending",
-            "testStrategy": "Test that when a new team joins, all connected clients receive the update within 5 seconds. Test with multiple simultaneous connections to verify broadcast functionality."
+            "dependencies": [],
+            "parentTaskId": 8
           },
           {
             "id": 4,
-            "title": "Implement Celebrity Addition Event Broadcasting",
-            "description": "Implement the functionality to broadcast events when a new celebrity is added to the pool.",
-            "dependencies": [
-              "8.2"
-            ],
-            "details": "Modify the celebrity addition API endpoint to emit WebSocket events when a new celebrity is added to the pool. The event should include celebrity details (ID, name, category) and be broadcast to all connected clients in the affected league.",
+            "title": "Integrate polling in frontend state layer",
+            "description": "Create a lightweight polling service/hook to update local state on a 2–3s interval; suspend polling during user actions and resume after.",
+            "details": "",
             "status": "pending",
-            "testStrategy": "Test that when a new celebrity is added, all connected clients receive the update within 5 seconds. Verify that the celebrity data is complete and correctly formatted."
+            "dependencies": [],
+            "parentTaskId": 8
           },
           {
             "id": 5,
-            "title": "Implement Draft Pick Event Broadcasting",
-            "description": "Implement the functionality to broadcast events when a draft pick is made.",
-            "dependencies": [
-              "8.2"
-            ],
-            "details": "Modify the draft pick API endpoint to emit WebSocket events when a team makes a draft pick. The event should include pick details (team, celebrity, round, pick number) and updated draft state. Ensure the event is broadcast to all connected clients in the specific league.",
+            "title": "Basic backoff on polling errors",
+            "description": "On repeated 4xx/5xx failures, back off polling interval temporarily; display minimal offline indicator.",
+            "details": "",
             "status": "pending",
-            "testStrategy": "Test that when a draft pick is made, all connected clients receive the update within 5 seconds. Test the complete draft flow to ensure all picks are properly broadcast."
-          },
-          {
-            "id": 6,
-            "title": "Implement Draft Status Change Event Broadcasting",
-            "description": "Implement the functionality to broadcast events when the draft status changes.",
-            "dependencies": [
-              "8.2"
-            ],
-            "details": "Modify the draft start API and any other endpoints that change draft status to emit WebSocket events. The event should include the new status and any relevant state changes (e.g., draft order when starting). Ensure the event is broadcast to all connected clients in the specific league.",
-            "status": "pending",
-            "testStrategy": "Test status changes from 'setup' to 'drafting' to 'completed' and verify all connected clients receive the updates within 5 seconds."
-          },
-          {
-            "id": 7,
-            "title": "Implement Client-Side WebSocket Connection",
-            "description": "Implement the client-side code to establish and maintain WebSocket connections.",
-            "dependencies": [
-              "8.2"
-            ],
-            "details": "Create a WebSocket client service that connects to the server, handles authentication, and processes incoming events. Implement event listeners for different event types and update the UI accordingly. Ensure the connection is established when a user joins or views a league.",
-            "status": "pending",
-            "testStrategy": "Test connection establishment, event reception, and UI updates. Verify that the client can handle all event types correctly."
-          },
-          {
-            "id": 8,
-            "title": "Implement Reconnection Logic",
-            "description": "Implement robust reconnection logic for both server and client.",
-            "dependencies": [
-              "8.2",
-              "8.7"
-            ],
-            "details": "Implement exponential backoff reconnection strategy on the client side. Handle reconnection scenarios on the server side, including re-joining the correct league channel. Implement a mechanism to catch up on missed events during disconnection periods.",
-            "status": "pending",
-            "testStrategy": "Test reconnection by simulating network interruptions. Verify that clients can reconnect and receive missed events. Test with various disconnection durations."
-          },
-          {
-            "id": 9,
-            "title": "Implement Fallback Polling Mechanism",
-            "description": "Implement a fallback to short polling if WebSockets are not available.",
-            "dependencies": [
-              "8.7"
-            ],
-            "details": "Create a polling mechanism that activates when WebSocket connections fail. The polling should request updates at 2-5 second intervals from a dedicated API endpoint. Implement the server-side endpoint to return recent events since the client's last known state.",
-            "status": "pending",
-            "testStrategy": "Test the fallback mechanism by disabling WebSockets. Verify that updates are still received through polling. Measure the latency to ensure it meets the 5-second requirement."
-          },
-          {
-            "id": 10,
-            "title": "Optimize Performance and Scalability",
-            "description": "Optimize the WebSocket server for performance and scalability.",
-            "dependencies": [
-              "8.2",
-              "8.3",
-              "8.4",
-              "8.5",
-              "8.6"
-            ],
-            "details": "Implement connection limits per league. Optimize message payloads to reduce bandwidth. Implement server-side caching of recent events for reconnection scenarios. Consider horizontal scaling options for the WebSocket server.",
-            "status": "pending",
-            "testStrategy": "Perform load testing with simulated concurrent users. Measure message delivery latency under load. Test with large leagues (maximum 20 teams) to ensure performance remains acceptable."
-          },
-          {
-            "id": 11,
-            "title": "Implement Comprehensive Testing",
-            "description": "Implement comprehensive testing for the WebSocket functionality.",
-            "dependencies": [
-              "8.3",
-              "8.4",
-              "8.5",
-              "8.6",
-              "8.7",
-              "8.8",
-              "8.9"
-            ],
-            "details": "Create unit tests for WebSocket event handling. Implement integration tests for the complete flow from API actions to WebSocket events. Create end-to-end tests that simulate real user scenarios. Implement latency measurements to verify the 5-second propagation requirement.",
-            "status": "pending",
-            "testStrategy": "Run automated tests in CI/CD pipeline. Perform manual testing with multiple browsers and devices. Test edge cases like simultaneous events and connection limits."
-          },
-          {
-            "id": 12,
-            "title": "Create Documentation and Monitoring",
-            "description": "Create documentation for the WebSocket API and implement monitoring.",
-            "dependencies": [
-              "8.10",
-              "8.11"
-            ],
-            "details": "Document the WebSocket event types, payloads, and expected behaviors. Create client integration examples. Implement monitoring for WebSocket connections, message delivery latency, and error rates. Set up alerts for performance degradation.",
-            "status": "pending",
-            "testStrategy": "Review documentation with team members. Verify that monitoring captures all relevant metrics and alerts function correctly."
+            "dependencies": [],
+            "parentTaskId": 8
           }
         ]
       },
@@ -1644,25 +1513,13 @@
             "testStrategy": "Test with different draft sizes. Verify correct display of all picks. Test filtering and sorting options."
           },
           {
-            "id": 4,
-            "title": "Implement League Summary Statistics Component",
-            "description": "Create a component to display league-wide statistics after draft completion",
-            "dependencies": [
-              "14.1"
-            ],
-            "details": "Develop a component that calculates and displays league summary statistics such as average pick time, most popular celebrity categories, teams with fastest/slowest picks, etc. Include visualizations like charts or graphs where appropriate.",
-            "status": "pending",
-            "testStrategy": "Test with various draft data sets. Verify accuracy of statistical calculations. Test responsive behavior of visualizations."
-          },
-          {
             "id": 5,
             "title": "Implement Navigation Between Recap Views",
             "description": "Create navigation controls to switch between different recap views",
             "dependencies": [
               "14.1",
               "14.2",
-              "14.3",
-              "14.4"
+              "14.3"
             ],
             "details": "Implement tab-based or button-based navigation to allow users to switch between different recap views (rosters, draft order, statistics). Ensure the navigation is intuitive and maintains state when switching between views.",
             "status": "pending",
@@ -1674,8 +1531,7 @@
             "description": "Integrate the recap UI components with backend API endpoints",
             "dependencies": [
               "14.2",
-              "14.3",
-              "14.4"
+              "14.3"
             ],
             "details": "Connect the recap UI components to the appropriate backend API endpoints to fetch final draft data, rosters, and statistics. Implement proper loading states and error handling for API requests.",
             "status": "pending",
@@ -1693,72 +1549,17 @@
             "testStrategy": "Test access control with various draft states. Verify redirects work correctly for incomplete drafts."
           },
           {
-            "id": 8,
-            "title": "Create Print/Export Functionality",
-            "description": "Implement functionality to print or export the draft recap",
-            "dependencies": [
-              "14.2",
-              "14.3",
-              "14.4"
-            ],
-            "details": "Add buttons and functionality to allow users to print the recap or export it in common formats (PDF, CSV). Ensure the printed/exported version is well-formatted and includes all relevant information.",
-            "status": "pending",
-            "testStrategy": "Test print preview functionality. Test export to different formats. Verify formatting of exported documents."
-          },
-          {
             "id": 9,
             "title": "Implement Responsive Design for Recap UI",
             "description": "Ensure the recap UI works well on different screen sizes",
             "dependencies": [
               "14.2",
               "14.3",
-              "14.4",
               "14.5"
             ],
             "details": "Optimize the recap UI components for various screen sizes and devices. Implement responsive layouts that reorganize content appropriately for mobile, tablet, and desktop views.",
             "status": "pending",
             "testStrategy": "Test on various device sizes and orientations. Verify all content is accessible and readable on small screens."
-          },
-          {
-            "id": 10,
-            "title": "Add Social Sharing Options",
-            "description": "Implement functionality to share draft results on social media",
-            "dependencies": [
-              "14.6"
-            ],
-            "details": "Add buttons and functionality to allow users to share draft results on social media platforms. Generate appropriate preview content and links for sharing.",
-            "status": "pending",
-            "testStrategy": "Test sharing functionality with various social platforms. Verify preview content is generated correctly."
-          },
-          {
-            "id": 11,
-            "title": "Implement End-to-End Testing for Recap UI",
-            "description": "Create comprehensive end-to-end tests for the recap UI",
-            "dependencies": [
-              "14.2",
-              "14.3",
-              "14.4",
-              "14.5",
-              "14.6",
-              "14.7",
-              "14.8",
-              "14.9",
-              "14.10"
-            ],
-            "details": "Develop end-to-end tests that verify the complete functionality of the recap UI, including data loading, navigation, and user interactions. Test with various draft scenarios and edge cases.",
-            "status": "pending",
-            "testStrategy": "Create automated tests for all user flows. Test with various data sets including edge cases. Verify all components work together correctly."
-          },
-          {
-            "id": 12,
-            "title": "Optimize Performance for Large Drafts",
-            "description": "Ensure the recap UI performs well with large draft data",
-            "dependencies": [
-              "14.6"
-            ],
-            "details": "Optimize the performance of the recap UI when displaying large amounts of data. Implement pagination, virtualization, or other techniques to handle large leagues efficiently.",
-            "status": "pending",
-            "testStrategy": "Test with large draft data sets. Measure and optimize load times and rendering performance. Test scrolling performance with large lists."
           }
         ]
       },
@@ -1786,39 +1587,6 @@
             "testStrategy": "Test different notification types. Verify proper styling, timeout behavior, and dismissal functionality. Test accessibility features including screen reader compatibility."
           },
           {
-            "id": 2,
-            "title": "Implement WebSocket Reconnection Logic",
-            "description": "Create a robust WebSocket connection manager with exponential backoff reconnection strategy.",
-            "dependencies": [
-              "15.1"
-            ],
-            "details": "Implement a WebSocket connection manager that handles disconnections gracefully. Use exponential backoff algorithm starting with a short delay (e.g., 500ms) and increasing up to a maximum (e.g., 30 seconds). Track connection state and attempt count. Reset backoff after successful reconnection. Include jitter to prevent thundering herd problems in case of server issues.",
-            "status": "pending",
-            "testStrategy": "Test reconnection with various network interruption scenarios. Verify backoff timing increases appropriately. Test successful reconnection resets the backoff timer. Test maximum retry behavior."
-          },
-          {
-            "id": 3,
-            "title": "Add Manual Refresh Button for Disconnected State",
-            "description": "Implement a manual refresh button that appears when the application detects a disconnection from the server.",
-            "dependencies": [
-              "15.2"
-            ],
-            "details": "Create a UI component that appears when WebSocket connection is lost. The button should trigger a manual reconnection attempt and refresh relevant data. Position it prominently in the UI when needed. Include appropriate loading states during reconnection attempts.",
-            "status": "pending",
-            "testStrategy": "Test button appearance on disconnection. Verify reconnection flow works when button is clicked. Test loading states during reconnection process."
-          },
-          {
-            "id": 4,
-            "title": "Implement Offline State Indicator",
-            "description": "Create a visual indicator that shows when the application is in offline mode and cannot connect to the server.",
-            "dependencies": [
-              "15.2"
-            ],
-            "details": "Develop a persistent visual indicator (banner or icon) that appears when the application is offline. Use the browser's navigator.onLine property and listen for 'online' and 'offline' events. Combine this with WebSocket connection status for more accurate offline detection. Update the UI accordingly when connection status changes.",
-            "status": "pending",
-            "testStrategy": "Test indicator appearance in offline scenarios. Verify it disappears when connection is restored. Test with both browser offline events and WebSocket disconnection scenarios."
-          },
-          {
             "id": 5,
             "title": "Implement API Error Handling Middleware",
             "description": "Create middleware to standardize error handling across all API endpoints.",
@@ -1839,64 +1607,6 @@
             "testStrategy": "Test error boundaries with deliberately failing components. Verify fallback UI appears correctly. Test recovery mechanisms like retry functionality."
           },
           {
-            "id": 7,
-            "title": "Implement API Rate Limiting",
-            "description": "Add rate limiting to API endpoints to prevent abuse and ensure fair usage.",
-            "dependencies": [
-              "15.5"
-            ],
-            "details": "Implement rate limiting middleware for API endpoints. Use a sliding window algorithm with Redis or an in-memory store. Set appropriate limits for different endpoints (e.g., stricter limits for authentication endpoints). Return 429 Too Many Requests with Retry-After headers when limits are exceeded. Include rate limit information in response headers.",
-            "status": "pending",
-            "testStrategy": "Test rate limiting by making rapid requests. Verify 429 responses after limits are exceeded. Test Retry-After headers. Verify rate limits reset after the specified window."
-          },
-          {
-            "id": 8,
-            "title": "Implement Idempotent API Operations",
-            "description": "Modify API endpoints to handle duplicate requests safely through idempotency keys.",
-            "dependencies": [
-              "15.5",
-              "15.7"
-            ],
-            "details": "Implement idempotency for critical write operations, particularly draft picks and league creation. Use client-generated idempotency keys in request headers. Store processed requests with their results temporarily (e.g., 24 hours). Return cached results for duplicate requests with the same idempotency key. Ensure database transactions are used appropriately to prevent partial updates.",
-            "status": "pending",
-            "testStrategy": "Test duplicate requests with the same idempotency key return identical responses. Verify database state is consistent after duplicate requests. Test idempotency key expiration behavior."
-          },
-          {
-            "id": 9,
-            "title": "Implement Offline Data Caching",
-            "description": "Add client-side caching to allow basic application functionality when offline.",
-            "dependencies": [
-              "15.4"
-            ],
-            "details": "Implement client-side caching using IndexedDB or localStorage. Cache critical data like league details and draft state. Implement a synchronization mechanism to update server when connection is restored. Show appropriate indicators for cached vs. live data. Handle conflicts that may arise during synchronization.",
-            "status": "pending",
-            "testStrategy": "Test application behavior when offline. Verify cached data is displayed correctly. Test synchronization when connection is restored. Test conflict resolution strategies."
-          },
-          {
-            "id": 10,
-            "title": "Implement Network Status Monitoring Service",
-            "description": "Create a service to monitor and report on network connectivity and API health.",
-            "dependencies": [
-              "15.2",
-              "15.4"
-            ],
-            "details": "Develop a service that monitors network status using a combination of navigator.onLine, periodic health check pings, and WebSocket connection status. Provide a unified API for components to subscribe to network status changes. Include detailed status information (connected, connecting, disconnected, offline) and reason for disconnection when available.",
-            "status": "pending",
-            "testStrategy": "Test status reporting under various network conditions. Verify subscribers are notified of status changes. Test recovery detection and notification."
-          },
-          {
-            "id": 11,
-            "title": "Add Comprehensive Error Logging",
-            "description": "Implement client-side and server-side error logging to capture and report application errors.",
-            "dependencies": [
-              "15.5",
-              "15.6"
-            ],
-            "details": "Set up error logging infrastructure for both client and server. Capture JavaScript errors, API errors, and WebSocket issues. Include contextual information like user ID, session ID, and application state. Implement log levels (debug, info, warn, error) and appropriate filtering. Consider integration with a monitoring service like Sentry or LogRocket.",
-            "status": "pending",
-            "testStrategy": "Test error capturing for various error types. Verify contextual information is included. Test that sensitive information is properly scrubbed from logs."
-          },
-          {
             "id": 12,
             "title": "Implement Graceful API Timeout Handling",
             "description": "Add timeout handling for API requests with appropriate user feedback.",
@@ -1907,50 +1617,6 @@
             "details": "Implement timeout handling for all API requests. Set appropriate timeout thresholds based on operation type. Show loading indicators for in-progress requests. Provide clear feedback when requests timeout. Implement retry mechanisms with exponential backoff for important operations.",
             "status": "pending",
             "testStrategy": "Test timeout behavior by simulating slow responses. Verify timeout messages are displayed correctly. Test retry functionality works as expected."
-          },
-          {
-            "id": 13,
-            "title": "Create Network Resilience Documentation",
-            "description": "Document the error handling and network resilience features for developers and support teams.",
-            "dependencies": [
-              "15.1",
-              "15.2",
-              "15.3",
-              "15.4",
-              "15.5",
-              "15.6",
-              "15.7",
-              "15.8",
-              "15.9",
-              "15.10",
-              "15.11",
-              "15.12"
-            ],
-            "details": "Create comprehensive documentation covering all implemented error handling and network resilience features. Include error codes and their meanings, retry strategies, rate limiting details, and troubleshooting guides. Document how to test network resilience features. Create diagrams showing the flow of error handling and recovery processes.",
-            "status": "pending",
-            "testStrategy": "Review documentation with team members to ensure clarity and completeness. Verify all implemented features are properly documented."
-          },
-          {
-            "id": 14,
-            "title": "Implement Integration Tests for Network Resilience",
-            "description": "Create comprehensive integration tests to verify all network resilience features work together correctly.",
-            "dependencies": [
-              "15.1",
-              "15.2",
-              "15.3",
-              "15.4",
-              "15.5",
-              "15.6",
-              "15.7",
-              "15.8",
-              "15.9",
-              "15.10",
-              "15.11",
-              "15.12"
-            ],
-            "details": "Develop integration tests that simulate various network failure scenarios: disconnections, slow responses, server errors, and more. Test the complete user flow under these conditions. Verify that the application recovers gracefully and maintains data integrity. Test combinations of failure modes to ensure robust handling.",
-            "status": "pending",
-            "testStrategy": "Use network throttling and service mocking to simulate various failure conditions. Test complete user journeys under degraded network conditions. Verify data integrity is maintained throughout."
           }
         ]
       }
