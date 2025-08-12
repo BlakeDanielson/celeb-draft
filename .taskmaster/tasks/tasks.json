@@ -294,7 +294,7 @@
         "id": 4,
         "title": "Implement Celebrity Management API",
         "description": "Create API endpoints to add and retrieve celebrities for a league's draft pool.",
-        "details": "Implement the following endpoints:\n1. POST /leagues/{leagueId}/celebrities - Add a new celebrity to the pool\n   - Accept celebrity name\n   - Normalize name (trim whitespace, convert to lowercase for comparison)\n   - Check for duplicates (case-insensitive)\n   - Store the team ID of who added the celebrity\n2. GET /leagues/{leagueId}/celebrities - Retrieve all celebrities in the pool\n   - Include pagination and basic text search by name\n\nEnsure proper validation and error handling for duplicate names, even with different casing or whitespace.",
+        "details": "Implement the following endpoints:\n1. POST /leagues/{leagueId}/celebrities - Add a new celebrity to the pool\n   - Accept celebrity name\n   - Normalize name (trim whitespace, convert to lowercase for comparison)\n   - Check for duplicates (case-insensitive)\n   - Store the team ID of who added the celebrity\n2. GET /leagues/{leagueId}/celebrities - Retrieve all celebrities in the pool\n   - Include pagination and basic text search by name\n\nEnsure proper validation and error handling for duplicate names, even with different casing or whitespace.\n<info added on 2025-08-12T20:57:39.800Z>\nMVP ADJUSTMENT:\nFor the initial implementation, focus on the core functionality:\n1. POST /leagues/{leagueId}/celebrities - Implement as specified with name normalization and case-insensitive duplicate detection\n2. GET /leagues/{leagueId}/celebrities - Implement a simple endpoint that returns all celebrities for a league without server-side pagination or search functionality\n\nServer-side pagination and text search capabilities are deferred to a future iteration. The frontend will handle basic filtering and display limitations initially. Maintain all validation and error handling for duplicate detection as originally specified.\n</info added on 2025-08-12T20:57:39.800Z>",
         "testStrategy": "Test adding celebrities with various name formats to verify normalization. Test duplicate detection with different case and whitespace. Test the search functionality with partial name matches. Integration test the complete flow of adding and retrieving celebrities.",
         "priority": "high",
         "dependencies": [
@@ -767,7 +767,7 @@
         "id": 8,
         "title": "Implement Realtime Updates with WebSockets",
         "description": "Implement WebSocket connections to provide realtime updates for joins, celebrity additions, and draft picks.",
-        "details": "Create a WebSocket server that:\n1. Establishes connections per league\n2. Broadcasts events to all connected clients when:\n   - A new team joins the league\n   - A new celebrity is added to the pool\n   - A draft pick is made\n   - Draft status changes\n3. Implements reconnection logic\n4. Ensures updates propagate within 5 seconds\n\nEach event should include the necessary data for clients to update their state without requiring a full refresh. Implement a fallback to short polling (2-5s interval) if WebSockets are not available.",
+        "details": "Create a WebSocket server that:\n1. Establishes connections per league\n2. Broadcasts events to all connected clients when:\n   - A new team joins the league\n   - A new celebrity is added to the pool\n   - A draft pick is made\n   - Draft status changes\n3. Implements reconnection logic\n4. Ensures updates propagate within 5 seconds\n\nEach event should include the necessary data for clients to update their state without requiring a full refresh. Implement a fallback to short polling (2-5s interval) if WebSockets are not available.\n<info added on 2025-08-12T20:57:35.183Z>\nMVP SCOPE CHANGE: For the initial MVP, we will implement short polling instead of WebSockets for realtime updates. The WebSocket implementation described in this task is deferred to a post-MVP release.\n\nFor the MVP, we will:\n1. Use short polling with a 2-3 second interval to provide near-realtime updates\n2. Implement the polling-friendly endpoints described in subtasks 8.1-8.5\n3. Focus on efficient conditional requests using ETags/Last-Modified headers\n4. Implement basic error handling with backoff for polling failures\n5. Ensure the polling solution meets the same functional requirements (updates for joins, celebrity additions, draft picks, and status changes)\n\nThe original WebSocket implementation will be revisited after the MVP release when we can dedicate resources to a more sophisticated realtime solution.\n</info added on 2025-08-12T20:57:35.183Z>",
         "testStrategy": "Test WebSocket connections and event broadcasting. Measure latency to ensure updates propagate within 5 seconds. Test reconnection scenarios. Test the fallback polling mechanism. Integration test with the full draft flow to verify realtime updates work correctly.",
         "priority": "high",
         "dependencies": [
@@ -929,24 +929,9 @@
             "details": "Implement error handling: 1) Form validation errors with clear messages, 2) API error handling with user-friendly messages, 3) Network error detection and retry options, 4) Loading states with spinners or skeletons, 5) Success notifications for key actions",
             "status": "pending",
             "testStrategy": "Test all error scenarios including form validation, API errors, and network failures. Verify error messages are clear and actionable. Test loading state displays."
-          }
-        ]
-      },
-      {
-        "id": 10,
-        "title": "Create Frontend Join Flow UI",
-        "description": "Implement the UI for joining a league via invite link.",
-        "details": "Create frontend components for:\n1. Join screen with:\n   - League name display\n   - Display name input\n   - Join button\n2. Error states for:\n   - Invalid invite link\n   - League full\n   - League already started\n\nAfter successful join, redirect to the pre-draft lobby. Store the team information in local storage to maintain the session without authentication.",
-        "testStrategy": "Test the join flow with valid and invalid scenarios. Test error state displays. Test the redirect after successful join. Test persistence of team information in local storage.",
-        "priority": "medium",
-        "dependencies": [
-          3,
-          9
-        ],
-        "status": "pending",
-        "subtasks": [
+          },
           {
-            "id": 1,
+            "id": 9,
             "title": "Design Join Screen UI Components",
             "description": "Create the UI components for the join screen including league name display, display name input, and join button.",
             "dependencies": [],
@@ -955,7 +940,7 @@
             "testStrategy": "Test the component rendering with various screen sizes. Verify input validation for display name. Test accessibility of all UI elements."
           },
           {
-            "id": 2,
+            "id": 10,
             "title": "Implement Error State UI Components",
             "description": "Create UI components for displaying error states including invalid invite link, league full, and league already started scenarios.",
             "dependencies": [
@@ -966,7 +951,7 @@
             "testStrategy": "Test each error state display. Verify that error messages are clear and actionable. Test that error components render correctly on different devices."
           },
           {
-            "id": 3,
+            "id": 11,
             "title": "Create Invite Link Validation Logic",
             "description": "Implement the logic to validate invite links and handle different validation scenarios.",
             "dependencies": [],
@@ -975,7 +960,7 @@
             "testStrategy": "Test validation with valid links, malformed links, and links with invalid league IDs. Test edge cases like empty strings or very long inputs."
           },
           {
-            "id": 4,
+            "id": 12,
             "title": "Implement API Integration for Join Flow",
             "description": "Connect the join UI to backend APIs for validating leagues and joining teams.",
             "dependencies": [
@@ -987,7 +972,7 @@
             "testStrategy": "Test API integration with mocked responses for success and various error cases. Test retry logic and error handling for network failures."
           },
           {
-            "id": 5,
+            "id": 13,
             "title": "Implement Local Storage for Team Information",
             "description": "Create functionality to store and retrieve team information in local storage after successful join.",
             "dependencies": [
@@ -998,7 +983,7 @@
             "testStrategy": "Test storage and retrieval of team information. Test with various browsers. Test edge cases like storage limits and clearing browser data."
           },
           {
-            "id": 6,
+            "id": 14,
             "title": "Implement Redirect to Pre-Draft Lobby",
             "description": "Create the logic to redirect users to the pre-draft lobby after successfully joining a league.",
             "dependencies": [
@@ -1010,7 +995,7 @@
             "testStrategy": "Test the redirect flow after successful join. Verify that team information is correctly passed to or available in the pre-draft lobby."
           },
           {
-            "id": 7,
+            "id": 15,
             "title": "Create Integration Tests for Join Flow",
             "description": "Develop comprehensive integration tests for the entire join flow from invite link to pre-draft lobby.",
             "dependencies": [
@@ -1026,7 +1011,7 @@
             "testStrategy": "Use a testing framework like Cypress to test the full user journey. Test all error states and the successful flow. Verify local storage persistence across page navigation."
           },
           {
-            "id": 8,
+            "id": 16,
             "title": "Implement Responsive Design for Join UI",
             "description": "Ensure the join flow UI is fully responsive and works well on mobile devices.",
             "dependencies": [
@@ -1040,124 +1025,6 @@
         ]
       },
       {
-        "id": 11,
-        "title": "Create Frontend Celebrity Management UI",
-        "description": "Implement the UI for adding and searching celebrities in the draft pool.",
-        "details": "Create frontend components for:\n1. Celebrity pool display with:\n   - List of available celebrities\n   - Basic text search input\n   - Add celebrity form\n2. Error states for:\n   - Duplicate celebrity names\n   - Network errors\n\nEnsure the UI updates in realtime when other participants add celebrities. Implement client-side validation to prevent obvious duplicates before submission.",
-        "testStrategy": "Test adding celebrities with various name formats. Test duplicate detection with different case and whitespace. Test the search functionality. Test realtime updates when celebrities are added by other participants.",
-        "priority": "medium",
-        "dependencies": [
-          4,
-          8,
-          10
-        ],
-        "status": "pending",
-        "subtasks": [
-          {
-            "id": 1,
-            "title": "Design Celebrity Pool UI Layout",
-            "description": "Create the layout and component structure for the celebrity pool UI",
-            "dependencies": [],
-            "details": "Design a responsive layout for the celebrity pool that includes sections for the celebrity list, search input, and add form. Define component hierarchy, state management approach, and styling guidelines.",
-            "status": "pending",
-            "testStrategy": "Verify layout responsiveness across different screen sizes. Ensure all required UI elements are present and properly positioned."
-          },
-          {
-            "id": 2,
-            "title": "Implement Celebrity List Component",
-            "description": "Create a component to display the list of available celebrities in the draft pool",
-            "dependencies": [
-              "11.1"
-            ],
-            "details": "Develop a component that renders a scrollable list of celebrities with appropriate styling. Each celebrity item should display the name and potentially other relevant information. Include pagination or infinite scrolling if the list becomes large.",
-            "status": "pending",
-            "testStrategy": "Test rendering with various numbers of celebrities. Test scrolling behavior. Verify correct display of celebrity information."
-          },
-          {
-            "id": 3,
-            "title": "Implement Search Functionality",
-            "description": "Create a search input component that filters the celebrity list in real-time",
-            "dependencies": [
-              "11.2"
-            ],
-            "details": "Implement a text input field that filters the celebrity list as the user types. The search should be case-insensitive and match partial names. Include clear button and appropriate styling for the search input.",
-            "status": "pending",
-            "testStrategy": "Test search with various inputs including partial matches, case variations, and special characters. Verify the list updates in real-time as the user types."
-          },
-          {
-            "id": 4,
-            "title": "Create Add Celebrity Form",
-            "description": "Implement a form for adding new celebrities to the draft pool",
-            "dependencies": [
-              "11.1"
-            ],
-            "details": "Create a form with input field(s) for celebrity name and potentially other attributes. Include a submit button and appropriate styling. The form should be accessible and follow best practices for form design.",
-            "status": "pending",
-            "testStrategy": "Test form submission with valid and invalid inputs. Verify form validation feedback. Test accessibility of the form."
-          },
-          {
-            "id": 5,
-            "title": "Implement Client-Side Validation",
-            "description": "Add validation logic to prevent submission of duplicate or invalid celebrity names",
-            "dependencies": [
-              "11.4"
-            ],
-            "details": "Implement client-side validation that checks for duplicate names (case-insensitive, accounting for whitespace) before submission. Add validation for other requirements such as minimum length or character restrictions. Provide clear feedback to users when validation fails.",
-            "status": "pending",
-            "testStrategy": "Test validation with exact duplicates, case variations, and whitespace differences. Test validation error messages are clear and helpful."
-          },
-          {
-            "id": 6,
-            "title": "Implement Error State UI",
-            "description": "Create UI components for displaying error states",
-            "dependencies": [
-              "11.1"
-            ],
-            "details": "Design and implement error state displays for duplicate celebrity names and network errors. Error messages should be clear, user-friendly, and provide guidance on how to resolve the issue. Include appropriate styling and potentially animations for error states.",
-            "status": "pending",
-            "testStrategy": "Test error displays with various error messages. Verify error states are visually distinct and provide clear guidance."
-          },
-          {
-            "id": 7,
-            "title": "Implement Real-Time Updates",
-            "description": "Add functionality to update the celebrity list in real-time when other users add celebrities",
-            "dependencies": [
-              "11.2"
-            ],
-            "details": "Integrate with the real-time update system (likely WebSockets) to receive notifications when other users add celebrities. Update the UI accordingly without requiring a page refresh. Include visual indicators for newly added celebrities.",
-            "status": "pending",
-            "testStrategy": "Test real-time updates with multiple simulated users. Verify the UI updates correctly when new celebrities are added by others."
-          },
-          {
-            "id": 8,
-            "title": "Integrate with Backend API",
-            "description": "Connect the UI components to the backend API for fetching and adding celebrities",
-            "dependencies": [
-              "11.2",
-              "11.3",
-              "11.4",
-              "11.5",
-              "11.6",
-              "11.7"
-            ],
-            "details": "Implement API calls to fetch the list of celebrities, search celebrities, and add new celebrities. Handle loading states, error handling, and response processing. Ensure proper error handling for network issues and server errors.",
-            "status": "pending",
-            "testStrategy": "Test API integration with mock responses for success and error cases. Verify loading states are displayed appropriately. Test error handling for various network and server error scenarios."
-          },
-          {
-            "id": 9,
-            "title": "Implement Final UI Polish and Optimization",
-            "description": "Finalize styling, animations, and performance optimizations",
-            "dependencies": [
-              "11.8"
-            ],
-            "details": "Apply final styling touches, add transitions and animations where appropriate. Optimize performance by implementing lazy loading, memoization, or other techniques as needed. Ensure the UI is fully responsive and accessible.",
-            "status": "pending",
-            "testStrategy": "Test performance with large datasets. Verify animations and transitions work smoothly. Test accessibility compliance. Conduct final cross-browser and cross-device testing."
-          }
-        ]
-      },
-      {
         "id": 12,
         "title": "Create Frontend Draft Board UI",
         "description": "Implement the UI for the draft board showing the draft order, current pick, and team rosters.",
@@ -1167,7 +1034,8 @@
         "dependencies": [
           5,
           8,
-          11
+          "4",
+          "6"
         ],
         "status": "pending",
         "subtasks": [
@@ -1311,25 +1179,9 @@
             "details": "Connect the draft board UI with other frontend components like the Draft Pick UI (Task 13) and Celebrity Management UI (Task 11). Ensure proper data flow and interaction between these components.",
             "status": "pending",
             "testStrategy": "Test the integration points between the draft board and other components. Verify that actions in one component correctly affect the state in other components."
-          }
-        ]
-      },
-      {
-        "id": 13,
-        "title": "Create Frontend Draft Pick UI",
-        "description": "Implement the UI for making draft picks during a team's turn.",
-        "details": "Create frontend components for:\n1. Pick selection UI with:\n   - Available celebrities list\n   - Search functionality\n   - Pick button\n2. Current turn indicator\n3. Error states for:\n   - Not your turn\n   - Celebrity already picked\n   - Network errors\n\nEnable the pick UI only when it's the user's turn. Implement optimistic UI updates with rollback on error. Ensure the UI updates in realtime as other teams make picks.",
-        "testStrategy": "Test making picks during a user's turn. Test the disabled state when it's not the user's turn. Test error handling for various scenarios. Test realtime updates when other teams make picks.",
-        "priority": "high",
-        "dependencies": [
-          6,
-          8,
-          12
-        ],
-        "status": "pending",
-        "subtasks": [
+          },
           {
-            "id": 1,
+            "id": 13,
             "title": "Design Available Celebrities List Component",
             "description": "Create a component to display the list of available celebrities for drafting",
             "dependencies": [],
@@ -1338,7 +1190,7 @@
             "testStrategy": "Test rendering with various numbers of celebrities. Test filtering and sorting. Verify visual updates when celebrities become unavailable."
           },
           {
-            "id": 2,
+            "id": 14,
             "title": "Implement Celebrity Search Functionality",
             "description": "Create a search input that filters the available celebrities list in real-time",
             "dependencies": [
@@ -1349,7 +1201,7 @@
             "testStrategy": "Test search with partial matches, case insensitivity, and special characters. Test empty state display. Test performance with large lists."
           },
           {
-            "id": 3,
+            "id": 15,
             "title": "Create Pick Button and Selection Confirmation",
             "description": "Implement the button for confirming a draft pick and any confirmation dialogs",
             "dependencies": [
@@ -1360,7 +1212,7 @@
             "testStrategy": "Test button state transitions. Test confirmation dialog. Test accessibility for keyboard navigation and screen readers."
           },
           {
-            "id": 4,
+            "id": 16,
             "title": "Implement Current Turn Indicator",
             "description": "Create a visual indicator showing whose turn it is to draft",
             "dependencies": [],
@@ -1369,7 +1221,7 @@
             "testStrategy": "Test visibility of the indicator. Test state changes between turns. Test timer functionality if implemented."
           },
           {
-            "id": 5,
+            "id": 17,
             "title": "Develop Error State for 'Not Your Turn'",
             "description": "Create UI elements to handle and display errors when a user attempts to draft out of turn",
             "dependencies": [
@@ -1381,7 +1233,7 @@
             "testStrategy": "Test error display when attempting to draft out of turn. Test that the UI is properly disabled. Test error message clarity."
           },
           {
-            "id": 6,
+            "id": 18,
             "title": "Develop Error State for 'Celebrity Already Picked'",
             "description": "Create UI elements to handle and display errors when a user attempts to draft a celebrity that's already been selected",
             "dependencies": [
@@ -1392,7 +1244,7 @@
             "testStrategy": "Test error display when attempting to draft an already-picked celebrity. Test that already-picked celebrities are properly marked or filtered out."
           },
           {
-            "id": 7,
+            "id": 19,
             "title": "Develop Error State for Network Errors",
             "description": "Create UI elements to handle and display network-related errors during the draft process",
             "dependencies": [
@@ -1403,7 +1255,7 @@
             "testStrategy": "Test error display during network failures. Test retry functionality. Test recovery after connection is restored."
           },
           {
-            "id": 8,
+            "id": 20,
             "title": "Implement Optimistic UI Updates with Rollback",
             "description": "Create a system for updating the UI immediately upon user action, with the ability to roll back if errors occur",
             "dependencies": [
@@ -1417,7 +1269,7 @@
             "testStrategy": "Test optimistic updates when making picks. Test rollback functionality for various error scenarios. Test user experience during the process."
           },
           {
-            "id": 9,
+            "id": 21,
             "title": "Implement Real-time Updates for Other Teams' Picks",
             "description": "Create functionality to update the UI in real-time when other teams make their picks",
             "dependencies": [
@@ -1429,7 +1281,7 @@
             "testStrategy": "Test real-time updates when other teams make picks. Test handling of concurrent picks. Test recovery after connection interruptions."
           },
           {
-            "id": 10,
+            "id": 22,
             "title": "Integrate Draft Pick UI with Backend API",
             "description": "Connect the draft pick UI components to the backend API endpoints",
             "dependencies": [
@@ -1442,7 +1294,7 @@
             "testStrategy": "Test API integration with mock and real endpoints. Test error handling for various API response scenarios. Test performance under realistic conditions."
           },
           {
-            "id": 11,
+            "id": 23,
             "title": "Create Responsive Layout for Draft Pick UI",
             "description": "Ensure the draft pick UI works well on various screen sizes and devices",
             "dependencies": [
@@ -1456,7 +1308,7 @@
             "testStrategy": "Test on various screen sizes and devices. Test touch interactions on mobile. Test layout adjustments at different breakpoints."
           },
           {
-            "id": 12,
+            "id": 24,
             "title": "Implement Accessibility Features",
             "description": "Ensure the draft pick UI is accessible to users with disabilities",
             "dependencies": [
@@ -1465,6 +1317,108 @@
             "details": "Implement accessibility features including keyboard navigation, screen reader support, sufficient color contrast, and focus management. Ensure all interactive elements have appropriate ARIA attributes.",
             "status": "pending",
             "testStrategy": "Test with keyboard navigation. Test with screen readers. Test color contrast. Verify ARIA attributes are correctly implemented."
+          },
+          {
+            "id": 25,
+            "title": "Design Celebrity Pool UI Layout",
+            "description": "Create the layout and component structure for the celebrity pool UI",
+            "dependencies": [],
+            "details": "Design a responsive layout for the celebrity pool that includes sections for the celebrity list, search input, and add form. Define component hierarchy, state management approach, and styling guidelines.",
+            "status": "pending",
+            "testStrategy": "Verify layout responsiveness across different screen sizes. Ensure all required UI elements are present and properly positioned."
+          },
+          {
+            "id": 26,
+            "title": "Implement Celebrity List Component",
+            "description": "Create a component to display the list of available celebrities in the draft pool",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Develop a component that renders a scrollable list of celebrities with appropriate styling. Each celebrity item should display the name and potentially other relevant information. Include pagination or infinite scrolling if the list becomes large.",
+            "status": "pending",
+            "testStrategy": "Test rendering with various numbers of celebrities. Test scrolling behavior. Verify correct display of celebrity information."
+          },
+          {
+            "id": 27,
+            "title": "Implement Search Functionality",
+            "description": "Create a search input component that filters the celebrity list in real-time",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Implement a text input field that filters the celebrity list as the user types. The search should be case-insensitive and match partial names. Include clear button and appropriate styling for the search input.",
+            "status": "pending",
+            "testStrategy": "Test search with various inputs including partial matches, case variations, and special characters. Verify the list updates in real-time as the user types."
+          },
+          {
+            "id": 28,
+            "title": "Create Add Celebrity Form",
+            "description": "Implement a form for adding new celebrities to the draft pool",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Create a form with input field(s) for celebrity name and potentially other attributes. Include a submit button and appropriate styling. The form should be accessible and follow best practices for form design.",
+            "status": "pending",
+            "testStrategy": "Test form submission with valid and invalid inputs. Verify form validation feedback. Test accessibility of the form."
+          },
+          {
+            "id": 29,
+            "title": "Implement Client-Side Validation",
+            "description": "Add validation logic to prevent submission of duplicate or invalid celebrity names",
+            "dependencies": [
+              "11.4"
+            ],
+            "details": "Implement client-side validation that checks for duplicate names (case-insensitive, accounting for whitespace) before submission. Add validation for other requirements such as minimum length or character restrictions. Provide clear feedback to users when validation fails.",
+            "status": "pending",
+            "testStrategy": "Test validation with exact duplicates, case variations, and whitespace differences. Test validation error messages are clear and helpful."
+          },
+          {
+            "id": 30,
+            "title": "Implement Error State UI",
+            "description": "Create UI components for displaying error states",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Design and implement error state displays for duplicate celebrity names and network errors. Error messages should be clear, user-friendly, and provide guidance on how to resolve the issue. Include appropriate styling and potentially animations for error states.",
+            "status": "pending",
+            "testStrategy": "Test error displays with various error messages. Verify error states are visually distinct and provide clear guidance."
+          },
+          {
+            "id": 31,
+            "title": "Implement Real-Time Updates",
+            "description": "Add functionality to update the celebrity list in real-time when other users add celebrities",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Integrate with the real-time update system (likely WebSockets) to receive notifications when other users add celebrities. Update the UI accordingly without requiring a page refresh. Include visual indicators for newly added celebrities.",
+            "status": "pending",
+            "testStrategy": "Test real-time updates with multiple simulated users. Verify the UI updates correctly when new celebrities are added by others."
+          },
+          {
+            "id": 32,
+            "title": "Integrate with Backend API",
+            "description": "Connect the UI components to the backend API for fetching and adding celebrities",
+            "dependencies": [
+              "11.2",
+              "11.3",
+              "11.4",
+              "11.5",
+              "11.6",
+              "11.7"
+            ],
+            "details": "Implement API calls to fetch the list of celebrities, search celebrities, and add new celebrities. Handle loading states, error handling, and response processing. Ensure proper error handling for network issues and server errors.",
+            "status": "pending",
+            "testStrategy": "Test API integration with mock responses for success and error cases. Verify loading states are displayed appropriately. Test error handling for various network and server error scenarios."
+          },
+          {
+            "id": 33,
+            "title": "Implement Final UI Polish and Optimization",
+            "description": "Finalize styling, animations, and performance optimizations",
+            "dependencies": [
+              "11.8"
+            ],
+            "details": "Apply final styling touches, add transitions and animations where appropriate. Optimize performance by implementing lazy loading, memoization, or other techniques as needed. Ensure the UI is fully responsive and accessible.",
+            "status": "pending",
+            "testStrategy": "Test performance with large datasets. Verify animations and transitions work smoothly. Test accessibility compliance. Conduct final cross-browser and cross-device testing."
           }
         ]
       },
@@ -1472,12 +1426,12 @@
         "id": 14,
         "title": "Create Frontend Recap UI",
         "description": "Implement the UI for the post-draft recap showing final rosters and the complete draft order.",
-        "details": "Create frontend components for:\n1. Recap view with:\n   - Final rosters by team\n   - Complete draft order\n   - League summary statistics\n2. Navigation between different recap views\n\nThe recap should be accessible after the draft is complete. Implement a clean, readable layout for the final results.",
+        "details": "Create frontend components for:\n1. Recap view with:\n   - Final rosters by team\n   - Complete draft order\n   - League summary statistics\n2. Navigation between different recap views\n\nThe recap should be accessible after the draft is complete. Implement a clean, readable layout for the final results.\n<info added on 2025-08-12T20:57:43.223Z>\nMVP SCOPE ADJUSTMENT:\nFor the initial release, focus only on implementing the core recap functionality:\n1. Final rosters by team display\n2. Complete draft order display\n3. Basic navigation between these two views\n\nLeague summary statistics, print/export functionality, social sharing features, and optimizations for large drafts are deferred to future releases. Ensure the basic recap UI is clean, functional, and performs well for standard draft sizes.\n</info added on 2025-08-12T20:57:43.223Z>",
         "testStrategy": "Test the recap display with various league sizes. Test navigation between different recap views. Test that the recap accurately reflects the final draft state.",
         "priority": "low",
         "dependencies": [
           7,
-          13
+          "12"
         ],
         "status": "pending",
         "subtasks": [
@@ -1567,12 +1521,11 @@
         "id": 15,
         "title": "Implement Error Handling and Network Resilience",
         "description": "Implement comprehensive error handling and network resilience features throughout the application.",
-        "details": "Implement the following features:\n1. Toast notifications for errors and important events\n2. Automatic WebSocket reconnection with exponential backoff\n3. Manual refresh button when disconnected\n4. Offline state indicator\n5. Rate limiting for API endpoints to prevent abuse\n6. Idempotent API operations to handle duplicate requests\n\nFocus on providing clear error messages to users and ensuring the application can recover from network issues gracefully.",
+        "details": "Implement the following features:\n1. Toast notifications for errors and important events\n2. Automatic WebSocket reconnection with exponential backoff\n3. Manual refresh button when disconnected\n4. Offline state indicator\n5. Rate limiting for API endpoints to prevent abuse\n6. Idempotent API operations to handle duplicate requests\n\nFocus on providing clear error messages to users and ensuring the application can recover from network issues gracefully.\n<info added on 2025-08-12T20:57:47.644Z>\n## MVP Adjustment for Error Handling Implementation\n\nFor the initial MVP, focus on implementing these critical error handling components:\n\n1. Toast notifications for errors and important events\n2. API error handling middleware\n3. Client-side error boundaries\n4. Graceful API timeout handling with appropriate user feedback\n\nThe following features will be deferred to a future release:\n- Rate limiting for API endpoints\n- Idempotent API operations\n- Offline state indicator and caching\n- Network connectivity monitoring\n- Automatic WebSocket reconnection with exponential backoff\n- Manual refresh button when disconnected\n- Comprehensive integration tests for network resilience\n\nPrioritize providing clear error messages to users for the most common error scenarios in the MVP implementation.\n</info added on 2025-08-12T20:57:47.644Z>",
         "testStrategy": "Test error handling for various scenarios. Test WebSocket disconnection and reconnection. Test the application behavior when offline. Test rate limiting by simulating rapid requests. Test idempotent operations with duplicate requests.",
         "priority": "medium",
         "dependencies": [
           8,
-          13,
           14
         ],
         "status": "pending",
