@@ -1,0 +1,224 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Structure and Database Schema",
+        "description": "Initialize the project repository and implement the core data models for the Death Draft game.",
+        "details": "Create a new project with appropriate structure for backend and frontend components. Implement the database schema based on the data model in section 11:\n\n1. League model: id, name, joinToken, status (enum: setup|drafting|complete), maxTeams (2-20), picksPerTeam (fixed at 5), createdAt\n2. Team model: id, leagueId, displayName, draftPosition (1..N), joinedAt\n3. Celebrity model: id, leagueId, name (unique per league, case-insensitive), addedByTeamId, addedAt\n4. DraftPick model: id, leagueId, round (1..5), overall (1..N*5), teamId, celebrityId, pickedAt\n\nEnsure proper indexes and constraints, particularly for the uniqueness of celebrity names within a league (case-insensitive, trimmed).",
+        "testStrategy": "Write unit tests for each model to verify constraints and relationships. Test the uniqueness constraint for celebrity names with various case and whitespace combinations. Verify that the models can be properly created, retrieved, updated, and deleted.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement League Creation API",
+        "description": "Create an API endpoint for commissioners to create a new league with configurable settings.",
+        "details": "Implement a POST /leagues endpoint that:\n1. Accepts league name and maxTeams (2-20, default 8)\n2. Sets picksPerTeam to fixed value of 5\n3. Generates a secure, unguessable joinToken\n4. Sets initial status to 'setup'\n5. Returns the created league with the joinToken\n\nThe joinToken should be sufficiently random to resist guessing (e.g., UUID v4). Implement validation to ensure league name is provided and maxTeams is within the allowed range.",
+        "testStrategy": "Write unit tests to verify validation rules for league creation. Test that joinToken is generated correctly and is sufficiently random. Test edge cases for maxTeams (2, 20, and invalid values). Integration test to verify the complete API flow.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Implement League Join API",
+        "description": "Create an API endpoint for participants to join a league via invite link with a display name.",
+        "details": "Implement a POST /leagues/{joinToken}/join endpoint that:\n1. Validates the joinToken exists and is for a league in 'setup' status\n2. Checks if the league is at capacity (maxTeams)\n3. Accepts a display name parameter\n4. Creates a new Team record with the display name\n5. Returns success with the team information\n\nImplement appropriate error handling for:\n- Invalid join token\n- League already started (status != 'setup')\n- League at capacity\n- Missing or invalid display name\n\nNo authentication is required as per the PRD.",
+        "testStrategy": "Test joining with valid and invalid tokens. Test joining a full league. Test joining a league that has already started. Test validation of display name. Integration test to verify the complete join flow.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Celebrity Management API",
+        "description": "Create API endpoints to add and retrieve celebrities for a league's draft pool.",
+        "details": "Implement the following endpoints:\n1. POST /leagues/{leagueId}/celebrities - Add a new celebrity to the pool\n   - Accept celebrity name\n   - Normalize name (trim whitespace, convert to lowercase for comparison)\n   - Check for duplicates (case-insensitive)\n   - Store the team ID of who added the celebrity\n2. GET /leagues/{leagueId}/celebrities - Retrieve all celebrities in the pool\n   - Include pagination and basic text search by name\n\nEnsure proper validation and error handling for duplicate names, even with different casing or whitespace.",
+        "testStrategy": "Test adding celebrities with various name formats to verify normalization. Test duplicate detection with different case and whitespace. Test the search functionality with partial name matches. Integration test the complete flow of adding and retrieving celebrities.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Draft Start API",
+        "description": "Create an API endpoint for the commissioner to start the draft, which randomizes the draft order and locks new joins.",
+        "details": "Implement a POST /leagues/{leagueId}/start-draft endpoint that:\n1. Verifies the requester is the commissioner (first team to join)\n2. Checks if the league has at least 2 teams\n3. Updates league status from 'setup' to 'drafting'\n4. Randomly assigns draft positions to all teams\n5. Returns the draft order\n\nThe draft order should follow a snake pattern across 5 rounds. Implement validation to prevent starting a draft with fewer than 2 teams.",
+        "testStrategy": "Test starting a draft with valid conditions. Test with invalid conditions (not commissioner, fewer than 2 teams). Verify that the draft order is properly randomized and that the league status is updated correctly. Test that new joins are prevented after draft start.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement Draft Pick API",
+        "description": "Create an API endpoint for participants to make draft picks during their turn.",
+        "details": "Implement a POST /leagues/{leagueId}/picks endpoint that:\n1. Validates it's the requesting team's turn to pick\n2. Accepts a celebrityId parameter\n3. Validates the celebrity exists and hasn't been picked\n4. Creates a DraftPick record with appropriate round and overall pick numbers\n5. Returns the updated draft state\n\nImplement server-side locking to prevent concurrent picks for the same draft position. Calculate the current team's turn based on the snake draft pattern and the number of picks already made.",
+        "testStrategy": "Test making valid picks. Test invalid scenarios: wrong turn, already picked celebrity, non-existent celebrity. Test the complete draft flow from first to last pick. Test concurrent pick attempts to verify locking mechanism works correctly.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          4,
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Draft State and Recap API",
+        "description": "Create API endpoints to retrieve the current draft state and final recap.",
+        "details": "Implement the following endpoints:\n1. GET /leagues/{leagueId}/draft-state - Get current draft state\n   - Include current pick, up-next, round/overall indicators\n   - Include all teams with their draft positions and current rosters\n   - Include draft status (setup/drafting/complete)\n2. GET /leagues/{leagueId}/recap - Get post-draft recap\n   - Include final rosters by team\n   - Include overall draft order and all picks\n\nThe draft should be marked complete when all teams have made their 5 picks.",
+        "testStrategy": "Test retrieving draft state at different stages (setup, during draft, completed). Verify the current pick and up-next indicators are correct throughout the draft. Test the recap endpoint after draft completion to ensure it shows the correct final state.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Realtime Updates with WebSockets",
+        "description": "Implement WebSocket connections to provide realtime updates for joins, celebrity additions, and draft picks.",
+        "details": "Create a WebSocket server that:\n1. Establishes connections per league\n2. Broadcasts events to all connected clients when:\n   - A new team joins the league\n   - A new celebrity is added to the pool\n   - A draft pick is made\n   - Draft status changes\n3. Implements reconnection logic\n4. Ensures updates propagate within 5 seconds\n\nEach event should include the necessary data for clients to update their state without requiring a full refresh. Implement a fallback to short polling (2-5s interval) if WebSockets are not available.",
+        "testStrategy": "Test WebSocket connections and event broadcasting. Measure latency to ensure updates propagate within 5 seconds. Test reconnection scenarios. Test the fallback polling mechanism. Integration test with the full draft flow to verify realtime updates work correctly.",
+        "priority": "high",
+        "dependencies": [
+          3,
+          4,
+          6,
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Create Frontend League Creation and Invite UI",
+        "description": "Implement the UI for creating a new league and sharing the invite link.",
+        "details": "Create frontend components for:\n1. League creation form with:\n   - League name input\n   - Max teams selector (2-20, default 8)\n   - Create button\n2. League invite screen with:\n   - League details display\n   - Copyable invite link\n   - Teams joined counter\n   - Start draft button (commissioner only)\n\nEnsure the invite link is easily copyable and includes the joinToken. The UI should clearly indicate the commissioner role.",
+        "testStrategy": "Test form validation for league creation. Test the copy functionality for the invite link. Test visibility of the start draft button for commissioner vs. regular participants. Test responsive design for different screen sizes.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Create Frontend Join Flow UI",
+        "description": "Implement the UI for joining a league via invite link.",
+        "details": "Create frontend components for:\n1. Join screen with:\n   - League name display\n   - Display name input\n   - Join button\n2. Error states for:\n   - Invalid invite link\n   - League full\n   - League already started\n\nAfter successful join, redirect to the pre-draft lobby. Store the team information in local storage to maintain the session without authentication.",
+        "testStrategy": "Test the join flow with valid and invalid scenarios. Test error state displays. Test the redirect after successful join. Test persistence of team information in local storage.",
+        "priority": "medium",
+        "dependencies": [
+          3,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Create Frontend Celebrity Management UI",
+        "description": "Implement the UI for adding and searching celebrities in the draft pool.",
+        "details": "Create frontend components for:\n1. Celebrity pool display with:\n   - List of available celebrities\n   - Basic text search input\n   - Add celebrity form\n2. Error states for:\n   - Duplicate celebrity names\n   - Network errors\n\nEnsure the UI updates in realtime when other participants add celebrities. Implement client-side validation to prevent obvious duplicates before submission.",
+        "testStrategy": "Test adding celebrities with various name formats. Test duplicate detection with different case and whitespace. Test the search functionality. Test realtime updates when celebrities are added by other participants.",
+        "priority": "medium",
+        "dependencies": [
+          4,
+          8,
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Create Frontend Draft Board UI",
+        "description": "Implement the UI for the draft board showing the draft order, current pick, and team rosters.",
+        "details": "Create frontend components for:\n1. Draft board with:\n   - Draft order display\n   - Current pick indicator\n   - Up-next indicator\n   - Round and overall pick indicators\n2. Team panels showing:\n   - Team name\n   - Draft position\n   - Current roster (up to 5 picks)\n3. Visual indicators for:\n   - Your team\n   - Current picking team\n   - Completed teams\n\nEnsure the UI updates in realtime as picks are made. Implement a clear visual distinction for the current picking team.",
+        "testStrategy": "Test the draft board display with various league sizes. Test the visual indicators for different states. Test realtime updates as picks are made. Test responsive design for different screen sizes.",
+        "priority": "high",
+        "dependencies": [
+          5,
+          8,
+          11
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Create Frontend Draft Pick UI",
+        "description": "Implement the UI for making draft picks during a team's turn.",
+        "details": "Create frontend components for:\n1. Pick selection UI with:\n   - Available celebrities list\n   - Search functionality\n   - Pick button\n2. Current turn indicator\n3. Error states for:\n   - Not your turn\n   - Celebrity already picked\n   - Network errors\n\nEnable the pick UI only when it's the user's turn. Implement optimistic UI updates with rollback on error. Ensure the UI updates in realtime as other teams make picks.",
+        "testStrategy": "Test making picks during a user's turn. Test the disabled state when it's not the user's turn. Test error handling for various scenarios. Test realtime updates when other teams make picks.",
+        "priority": "high",
+        "dependencies": [
+          6,
+          8,
+          12
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Create Frontend Recap UI",
+        "description": "Implement the UI for the post-draft recap showing final rosters and the complete draft order.",
+        "details": "Create frontend components for:\n1. Recap view with:\n   - Final rosters by team\n   - Complete draft order\n   - League summary statistics\n2. Navigation between different recap views\n\nThe recap should be accessible after the draft is complete. Implement a clean, readable layout for the final results.",
+        "testStrategy": "Test the recap display with various league sizes. Test navigation between different recap views. Test that the recap accurately reflects the final draft state.",
+        "priority": "low",
+        "dependencies": [
+          7,
+          13
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Error Handling and Network Resilience",
+        "description": "Implement comprehensive error handling and network resilience features throughout the application.",
+        "details": "Implement the following features:\n1. Toast notifications for errors and important events\n2. Automatic WebSocket reconnection with exponential backoff\n3. Manual refresh button when disconnected\n4. Offline state indicator\n5. Rate limiting for API endpoints to prevent abuse\n6. Idempotent API operations to handle duplicate requests\n\nFocus on providing clear error messages to users and ensuring the application can recover from network issues gracefully.",
+        "testStrategy": "Test error handling for various scenarios. Test WebSocket disconnection and reconnection. Test the application behavior when offline. Test rate limiting by simulating rapid requests. Test idempotent operations with duplicate requests.",
+        "priority": "medium",
+        "dependencies": [
+          8,
+          13,
+          14
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-12T20:36:42.249Z",
+      "updated": "2025-08-12T20:36:42.250Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
