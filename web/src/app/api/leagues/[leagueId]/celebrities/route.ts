@@ -20,7 +20,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ league
 		const { leagueId } = await context.params;
 		const celeb = await prisma.celebrity.create({ data: { leagueId, name, normalizedName, addedByTeamId } });
 		return NextResponse.json(celeb);
-	} catch (e) {
+	} catch {
 		return NextResponse.json({ error: "duplicate or invalid" }, { status: 409 });
 	}
 }

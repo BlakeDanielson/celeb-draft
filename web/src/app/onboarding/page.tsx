@@ -26,8 +26,9 @@ export default function OnboardingPage() {
 			const league = await res.json();
 			const url = `${location.origin}/onboarding?token=${league.joinToken}`;
 			setInvite(url);
-		} catch (err: any) {
-			setError(err.message || "Failed to create league");
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : "Failed to create league";
+				setError(msg);
 		} finally {
 			setLoading(false);
 		}
