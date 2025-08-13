@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ league
 	if (!team || !celeb || team.leagueId !== league.id || celeb.leagueId !== league.id) {
 		return NextResponse.json({ error: "invalid team or celebrity" }, { status: 400 });
 	}
-	const existingPick = await prisma.draftPick.findFirst({ where: { leagueId: league.id, celebrityId } });
+    const existingPick = await prisma.draftPick.findFirst({ where: { leagueId: league.id, celebrityId } });
 	if (existingPick) {
 		return NextResponse.json({ error: "celebrity already picked" }, { status: 409 });
 	}
@@ -39,8 +39,12 @@ export async function POST(req: NextRequest, context: { params: Promise<{ league
 	if (expectedTeam?.id !== teamId) {
 		return NextResponse.json({ error: "not your turn" }, { status: 409 });
 	}
-	const pick = await prisma.draftPick.create({ data: { leagueId: league.id, round, overall, teamId, celebrityId } });
-	return NextResponse.json(pick);
+    const pick = await prisma.draftPick.create({ data: { leagueId: league.id, round, overall, teamId, celebrityId } });
+    // If draft complete, update league status
+    if (overall >= teamCount * league.picksPerTeam) {
+        await prisma.league.update({ where: { id: league.id }, data: { status: "complete" } });
+    }
+    return NextResponse.json(pick);
 }
 
 

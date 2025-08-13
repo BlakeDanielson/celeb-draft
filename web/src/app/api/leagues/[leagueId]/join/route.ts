@@ -19,8 +19,8 @@ export async function POST(_req: NextRequest, context: { params: Promise<{ leagu
 		return NextResponse.json({ error: "league full" }, { status: 400 });
 	}
 
-	const team = await prisma.team.create({ data: { leagueId: league.id, displayName } });
-	return NextResponse.json({ team, league });
+    const team = await prisma.team.create({ data: { leagueId: league.id, displayName } });
+    return NextResponse.json({ team, league, message: "joined" });
 }
 
 
