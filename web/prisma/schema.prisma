@@ -10,3 +10,68 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model League {
+  id            String   @id @default(cuid())
+  name          String
+  joinToken     String   @unique
+  status        LeagueStatus @default(setup)
+  maxTeams      Int
+  picksPerTeam  Int
+  createdAt     DateTime @default(now())
+
+  teams         Team[]
+  celebrities   Celebrity[]
+  picks         DraftPick[]
+}
+
+enum LeagueStatus {
+  setup
+  drafting
+  complete
+}
+
+model Team {
+  id           String   @id @default(cuid())
+  leagueId     String
+  displayName  String
+  draftPosition Int?
+  joinedAt     DateTime @default(now())
+
+  league       League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  addedCelebs  Celebrity[]
+  picks        DraftPick[]
+
+  @@unique([leagueId, draftPosition])
+}
+
+model Celebrity {
+  id              String   @id @default(cuid())
+  leagueId        String
+  name            String
+  normalizedName  String
+  addedByTeamId   String
+  addedAt         DateTime @default(now())
+
+  league          League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  addedByTeam     Team     @relation(fields: [addedByTeamId], references: [id], onDelete: Cascade)
+  picks           DraftPick[]
+
+  @@unique([leagueId, normalizedName])
+}
+
+model DraftPick {
+  id          String   @id @default(cuid())
+  leagueId    String
+  round       Int
+  overall     Int
+  teamId      String
+  celebrityId String
+  pickedAt    DateTime @default(now())
+
+  league      League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  team        Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  celebrity   Celebrity @relation(fields: [celebrityId], references: [id], onDelete: Cascade)
+
+  @@unique([leagueId, overall])
+}
