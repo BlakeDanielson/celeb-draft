@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+type TeamRow = { joinedAt: string | Date };
+type PickRow = { pickedAt: string | Date };
+
 export async function GET(_req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
 	const { leagueId } = await context.params;
 	const [league, teams, picks] = await Promise.all([
@@ -12,8 +15,8 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ league
 		return NextResponse.json({ error: "not found" }, { status: 404 });
 	}
 	const currentPickOverall = picks.length + 1;
-	const teamTimes = teams.map((team) => new Date(team.joinedAt).getTime());
-	const pickTimes = picks.map((pick) => new Date(pick.pickedAt).getTime());
+	const teamTimes = (teams as TeamRow[]).map((team) => new Date(team.joinedAt).getTime());
+	const pickTimes = (picks as PickRow[]).map((pick) => new Date(pick.pickedAt).getTime());
 	const lastUpdated = new Date(
 		Math.max(new Date(league.createdAt).getTime(), ...teamTimes, ...pickTimes)
 	).toISOString();
