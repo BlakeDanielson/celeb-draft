@@ -13,7 +13,7 @@ export async function POST(_req: NextRequest, context: { params: Promise<{ leagu
 	}
 	// randomize positions
 	const shuffled = [...teams].sort(() => Math.random() - 0.5);
-	await prisma.$transaction(async (tx: typeof prisma) => {
+	await prisma.$transaction(async (tx) => {
 		for (let i = 0; i < shuffled.length; i++) {
 			await tx.team.update({ where: { id: shuffled[i].id }, data: { draftPosition: i + 1 } });
 		}
