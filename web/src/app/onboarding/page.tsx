@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { saveSession } from "@/lib/session";
+import { saveSession, loadSession } from "@/lib/session";
 
 export default function OnboardingPage() {
 	const router = useRouter();
@@ -22,20 +22,34 @@ export default function OnboardingPage() {
 	const [displayName, setDisplayName] = useState("");
 	const [joinMsg, setJoinMsg] = useState<string | null>(null);
 
-	async function startDraft() {
-		if (!invite) return;
+    async function startDraft() {
+        if (!invite) return;
 		try {
 			const u = new URL(invite);
 			const tokenFromInvite = u.searchParams.get("token");
 			if (!tokenFromInvite) return;
 			setLoading(true);
 			setError(null);
-			const res = await fetch(`/api/leagues/${encodeURIComponent(tokenFromInvite)}/start-draft`, { method: "POST" });
+            const session = loadSession();
+            if (!session?.teamId) {
+                throw new Error("Join as commissioner first");
+            }
+            const res = await fetch(`/api/leagues/${encodeURIComponent(tokenFromInvite)}/start-draft`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ teamId: session.teamId }),
+            });
 			if (!res.ok) {
 				const body = await res.json().catch(() => ({}));
 				throw new Error(body?.error || `HTTP ${res.status}`);
 			}
-			setJoinMsg("Draft started.");
+            const data = await res.json();
+            setJoinMsg("Draft started.");
+            if (Array.isArray(data?.order)) {
+                // brief inline preview of order
+                const preview = data.order.map((t: any) => `${t.draftPosition}. ${t.displayName}`).join(", ");
+                setJoinMsg(`Draft started. Order: ${preview}`);
+            }
 			// Navigate to the draft page once the draft has started
 			router.push("/draft");
 		} catch (err) {
@@ -136,7 +150,7 @@ export default function OnboardingPage() {
 				<div className="border rounded p-3 space-y-3">
 					<p className="text-sm">Invite link</p>
 					<code className="block break-all bg-gray-100 p-2 rounded">{invite}</code>
-					<button type="button" onClick={startDraft} disabled={loading} className="bg-blue-600 text-white px-3 py-2 rounded">
+                    <button type="button" onClick={startDraft} disabled={loading} className="bg-blue-600 text-white px-3 py-2 rounded">
 						{loading ? "Starting..." : "Start Draft"}
 					</button>
 
