@@ -42,6 +42,7 @@ export interface DraftStateDTO {
 	picks: DraftPickDTO[];
 	currentPickOverall: number;
 	lastUpdated: string;
+  upNextTeamId?: string | null;
 }
 
 

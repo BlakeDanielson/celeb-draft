@@ -22,10 +22,23 @@ export async function POST(req: NextRequest, context: { params: Promise<{ league
 	if (existingPick) {
 		return NextResponse.json({ error: "celebrity already picked" }, { status: 409 });
 	}
-	// compute next overall
-	const pickCount = await prisma.draftPick.count({ where: { leagueId: league.id } });
+	// compute next overall and simple snake-turn validation
+	const [pickCount, teams] = await Promise.all([
+		prisma.draftPick.count({ where: { leagueId: league.id } }),
+		prisma.team.findMany({ where: { leagueId: league.id }, orderBy: { draftPosition: "asc" } }),
+	]);
+	const teamCount = teams.length;
+	if (teamCount === 0) {
+		return NextResponse.json({ error: "no teams" }, { status: 400 });
+	}
 	const overall = pickCount + 1;
-	const round = Math.ceil(overall / league.picksPerTeam);
+	const round = Math.ceil(overall / teamCount);
+	const indexInRound = (overall - 1) % teamCount;
+	const expectedIndex = round % 2 === 1 ? indexInRound : (teamCount - 1 - indexInRound);
+	const expectedTeam = teams[expectedIndex];
+	if (expectedTeam?.id !== teamId) {
+		return NextResponse.json({ error: "not your turn" }, { status: 409 });
+	}
 	const pick = await prisma.draftPick.create({ data: { leagueId: league.id, round, overall, teamId, celebrityId } });
 	return NextResponse.json(pick);
 }
