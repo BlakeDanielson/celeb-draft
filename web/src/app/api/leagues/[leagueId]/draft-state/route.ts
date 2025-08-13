@@ -12,12 +12,10 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ league
 		return NextResponse.json({ error: "not found" }, { status: 404 });
 	}
 	const currentPickOverall = picks.length + 1;
+	const teamTimes = teams.map((team) => new Date(team.joinedAt).getTime());
+	const pickTimes = picks.map((pick) => new Date(pick.pickedAt).getTime());
 	const lastUpdated = new Date(
-		Math.max(
-			new Date(league.createdAt).getTime(),
-			...teams.map((t) => new Date(t.joinedAt).getTime()),
-			...picks.map((p) => new Date(p.pickedAt).getTime()),
-		)
+		Math.max(new Date(league.createdAt).getTime(), ...teamTimes, ...pickTimes)
 	).toISOString();
 	return NextResponse.json({ league, teams, picks, currentPickOverall, lastUpdated });
 }
