@@ -18,6 +18,7 @@ export default function DraftPage() {
 	const [isPicking, setIsPicking] = useState(false);
     const pollingRef = useRef<ReturnType<typeof createSimplePoller> | null>(null);
     const lastModifiedRef = useRef<string | undefined>(undefined);
+    const etagRef = useRef<string | undefined>(undefined);
     const BASE_POLL_MS = 2500;
     const MAX_POLL_MS = 20000;
     const currentIntervalRef = useRef<number>(BASE_POLL_MS);
@@ -51,14 +52,16 @@ export default function DraftPage() {
 
     async function fetchDraftState(activeLeagueId: string) {
 		try {
-            const { status, data, lastModified } = await fetchWithIfModifiedSince<DraftStateDTO>(
+            const { status, data, lastModified, etag } = await fetchWithIfModifiedSince<DraftStateDTO>(
                 `/api/leagues/${encodeURIComponent(activeLeagueId)}/draft-state`,
-                lastModifiedRef.current
+                lastModifiedRef.current,
+                etagRef.current
             );
             if (status !== 304 && data) {
                 setState(data);
                 setError(null);
                 if (lastModified) lastModifiedRef.current = lastModified;
+                if (etag) etagRef.current = etag;
             }
             // success path: reset backoff
             consecutiveFailuresRef.current = 0;

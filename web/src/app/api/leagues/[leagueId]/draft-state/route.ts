@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { createHash } from "crypto";
 
 type TeamRow = { joinedAt: string | Date };
 type PickRow = { pickedAt: string | Date };
@@ -24,11 +25,29 @@ export async function GET(req: NextRequest, context: { params: Promise<{ leagueI
     const expectedIndex = round % 2 === 1 ? indexInRound : (teamCount - 1 - indexInRound);
     upNextTeamId = teams[expectedIndex]?.id ?? null;
   }
-	const teamTimes = (teams as TeamRow[]).map((team) => new Date(team.joinedAt).getTime());
-	const pickTimes = (picks as PickRow[]).map((pick) => new Date(pick.pickedAt).getTime());
-	const lastUpdated = new Date(
-		Math.max(new Date(league.createdAt).getTime(), ...teamTimes, ...pickTimes)
-	).toISOString();
+    const teamTimes = (teams as TeamRow[]).map((team) => new Date(team.joinedAt).getTime());
+    const pickTimes = (picks as PickRow[]).map((pick) => new Date(pick.pickedAt).getTime());
+    const lastUpdated = new Date(
+        Math.max(new Date(league.createdAt).getTime(), ...teamTimes, ...pickTimes)
+    ).toISOString();
+
+    // Compute weak ETag from stable summary of state
+    const etagBase = `${lastUpdated}|p:${picks.length}|t:${teams.length}|u:${upNextTeamId ?? ""}`;
+    const etag = `W/"${createHash("sha1").update(etagBase).digest("base64")}"`;
+
+    // Prefer ETag (If-None-Match) over Last-Modified semantics
+    const ifNoneMatch = req.headers.get("if-none-match");
+    if (ifNoneMatch && ifNoneMatch === etag) {
+        return new NextResponse(null, {
+            status: 304,
+            headers: {
+                ETag: etag,
+                "Last-Modified": lastUpdated,
+                "Cache-Control": "no-cache",
+            },
+        });
+    }
+
     // Conditional GET support via If-Modified-Since / Last-Modified
     const ifModifiedSince = req.headers.get("if-modified-since");
     if (ifModifiedSince) {
@@ -38,6 +57,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ leagueI
             return new NextResponse(null, {
                 status: 304,
                 headers: {
+                    ETag: etag,
                     "Last-Modified": lastUpdated,
                     "Cache-Control": "no-cache",
                 },
@@ -49,6 +69,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ leagueI
         { league, teams, picks, currentPickOverall, lastUpdated, upNextTeamId },
         {
             headers: {
+                ETag: etag,
                 "Last-Modified": lastUpdated,
                 "Cache-Control": "no-cache",
             },
