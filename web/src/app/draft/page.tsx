@@ -18,6 +18,26 @@ export default function DraftPage() {
 	const [isPicking, setIsPicking] = useState(false);
     const pollingRef = useRef<ReturnType<typeof createSimplePoller> | null>(null);
     const lastModifiedRef = useRef<string | undefined>(undefined);
+    const BASE_POLL_MS = 2500;
+    const MAX_POLL_MS = 20000;
+    const currentIntervalRef = useRef<number>(BASE_POLL_MS);
+    const consecutiveFailuresRef = useRef<number>(0);
+    const [isOffline, setIsOffline] = useState(false);
+
+    function setPollingInterval(newInterval: number, activeLeagueId?: string | null) {
+        const interval = Math.max(1000, Math.min(newInterval, MAX_POLL_MS));
+        if (interval === currentIntervalRef.current && pollingRef.current) return;
+        currentIntervalRef.current = interval;
+        if (pollingRef.current) pollingRef.current.stop();
+        pollingRef.current = createSimplePoller({
+            intervalMs: currentIntervalRef.current,
+            request: async () => {
+                if (!activeLeagueId) return;
+                await fetchDraftState(activeLeagueId);
+            },
+        });
+        pollingRef.current.start();
+    }
 
 	useEffect(() => {
 		const session = loadSession();
@@ -40,9 +60,27 @@ export default function DraftPage() {
                 setError(null);
                 if (lastModified) lastModifiedRef.current = lastModified;
             }
+            // success path: reset backoff
+            consecutiveFailuresRef.current = 0;
+            if (isOffline) setIsOffline(false);
+            if (currentIntervalRef.current !== BASE_POLL_MS) {
+                setPollingInterval(BASE_POLL_MS, activeLeagueId);
+            }
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : "Failed to load draft state";
 			setError(msg);
+            consecutiveFailuresRef.current += 1;
+            setIsOffline(true);
+            // Backoff: on 2nd failure go to 5s, then double up to MAX
+            let nextInterval = currentIntervalRef.current;
+            if (consecutiveFailuresRef.current === 2) {
+                nextInterval = 5000;
+            } else if (consecutiveFailuresRef.current > 2) {
+                nextInterval = Math.min(currentIntervalRef.current * 2, MAX_POLL_MS);
+            }
+            if (nextInterval !== currentIntervalRef.current) {
+                setPollingInterval(nextInterval, activeLeagueId);
+            }
 		}
 	}
 
@@ -67,8 +105,9 @@ export default function DraftPage() {
         void fetchDraftState(leagueId);
         void fetchCelebrities(leagueId);
         if (pollingRef.current) pollingRef.current.stop();
+        currentIntervalRef.current = BASE_POLL_MS;
         pollingRef.current = createSimplePoller({
-            intervalMs: 2500,
+            intervalMs: currentIntervalRef.current,
             request: async () => {
                 if (!leagueId) return;
                 await fetchDraftState(leagueId);
@@ -168,6 +207,9 @@ export default function DraftPage() {
 			<h1 className="text-2xl font-semibold">Draft</h1>
 			{error && <p className="text-red-600 text-sm">{error}</p>}
 			{message && <p className="text-green-700 text-sm">{message}</p>}
+            {isOffline && (
+                <p className="text-xs text-gray-600">Offline; retrying with backoff…</p>
+            )}
 
 			{state ? (
 				<div className="space-y-4">
