@@ -205,11 +205,21 @@ export default function DraftPage() {
 		return map;
 	}, [celebrities]);
 
+	const isDraftComplete = state?.league.status === "complete";
+
 	return (
 		<main className="p-6 space-y-4">
 			<h1 className="text-2xl font-semibold">Draft</h1>
 			{error && <p className="text-red-600 text-sm">{error}</p>}
 			{message && <p className="text-green-700 text-sm">{message}</p>}
+			{isOffline && (
+				<p className="text-xs text-gray-600">Offline; retrying with backoff…</p>
+			)}
+			{isDraftComplete && (
+				<div className="rounded border border-green-600/30 bg-green-50 text-green-800 px-3 py-2 text-sm">
+					Draft complete. Selections are final.
+				</div>
+			)}
             {isOffline && (
                 <p className="text-xs text-gray-600">Offline; retrying with backoff…</p>
             )}
@@ -261,13 +271,13 @@ export default function DraftPage() {
 								return (
 									<li key={c.id} className="flex items-center justify-between">
 										<span>{c.name}</span>
-										<button
+								<button
 											type="button"
-											disabled={alreadyPicked || isPicking || notMyTurn}
+									disabled={alreadyPicked || isPicking || notMyTurn || isDraftComplete}
 											className={`px-2 py-1 rounded ${alreadyPicked ? "bg-gray-300 text-gray-600" : notMyTurn ? "bg-gray-300 text-gray-600" : "bg-blue-600 text-white"}`}
 											onClick={() => makePick(c.id)}
 										>
-											{alreadyPicked ? "Picked" : notMyTurn ? "Wait" : isPicking ? "Picking..." : "Pick"}
+									{alreadyPicked ? "Picked" : isDraftComplete ? "Done" : notMyTurn ? "Wait" : isPicking ? "Picking..." : "Pick"}
 										</button>
 									</li>
 								);
