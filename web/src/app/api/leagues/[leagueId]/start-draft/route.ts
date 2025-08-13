@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(_req: NextRequest, { params }: { params: { leagueId: string } }) {
-	const league = await prisma.league.findUnique({ where: { id: params.leagueId } });
+export async function POST(_req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
+	const { leagueId } = await context.params;
+	const league = await prisma.league.findUnique({ where: { id: leagueId } });
 	if (!league || league.status !== "setup") {
 		return NextResponse.json({ error: "league not in setup" }, { status: 400 });
 	}

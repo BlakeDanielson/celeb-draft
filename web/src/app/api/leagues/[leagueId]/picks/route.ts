@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: NextRequest, { params }: { params: { leagueId: string } }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
 	const body = await req.json();
 	const teamId = String(body?.teamId ?? "");
 	const celebrityId = String(body?.celebrityId ?? "");
 	if (!teamId || !celebrityId) {
 		return NextResponse.json({ error: "teamId and celebrityId required" }, { status: 400 });
 	}
-	const league = await prisma.league.findUnique({ where: { id: params.leagueId } });
+	const { leagueId } = await context.params;
+	const league = await prisma.league.findUnique({ where: { id: leagueId } });
 	if (!league || league.status !== "drafting") {
 		return NextResponse.json({ error: "league not drafting" }, { status: 400 });
 	}

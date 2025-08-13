@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(_req: NextRequest, { params }: { params: { leagueId: string } }) {
+export async function POST(_req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
 	const body = await _req.json();
 	const displayName = String(body?.displayName ?? "").trim();
 	if (!displayName) {
 		return NextResponse.json({ error: "displayName required" }, { status: 400 });
 	}
 
-	// Note: the dynamic segment name must match siblings; we treat this as a joinToken
-	const league = await prisma.league.findUnique({ where: { joinToken: params.leagueId } });
+	const { leagueId } = await context.params;
+	// treat leagueId path as invite token for MVP
+	const league = await prisma.league.findUnique({ where: { joinToken: leagueId } });
 	if (!league || league.status !== "setup") {
 		return NextResponse.json({ error: "invalid or unavailable invite" }, { status: 400 });
 	}

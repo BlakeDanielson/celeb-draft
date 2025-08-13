@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(_req: NextRequest, { params }: { params: { leagueId: string } }) {
-	const leagueId = params.leagueId;
+export async function GET(_req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
+	const { leagueId } = await context.params;
 	const [league, picks, teams] = await Promise.all([
 		prisma.league.findUnique({ where: { id: leagueId } }),
 		prisma.draftPick.findMany({ where: { leagueId }, orderBy: { overall: "asc" } }),
