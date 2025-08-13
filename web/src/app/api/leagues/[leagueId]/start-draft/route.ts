@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type { PrismaClient } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export async function POST(_req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
 	const { leagueId } = await context.params;
@@ -14,7 +14,7 @@ export async function POST(_req: NextRequest, context: { params: Promise<{ leagu
 	}
 	// randomize positions
 	const shuffled = [...teams].sort(() => Math.random() - 0.5);
-	await prisma.$transaction(async (tx: PrismaClient) => {
+	await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		for (let i = 0; i < shuffled.length; i++) {
 			await tx.team.update({ where: { id: shuffled[i].id }, data: { draftPosition: i + 1 } });
 		}
