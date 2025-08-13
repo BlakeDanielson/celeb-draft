@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 function generateJoinToken(): string {
 	return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);

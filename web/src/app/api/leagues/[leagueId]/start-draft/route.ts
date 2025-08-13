@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/src/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(_req: NextRequest, { params }: { params: { leagueId: string } }) {
 	const league = await prisma.league.findUnique({ where: { id: params.leagueId } });

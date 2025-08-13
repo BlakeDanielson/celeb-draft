@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/src/lib/prisma";
-import { normalizeName } from "@/src/lib/normalization";
+import { prisma } from "@/lib/prisma";
+import { normalizeName } from "@/lib/normalization";
 
 export async function GET(_req: NextRequest, { params }: { params: { leagueId: string } }) {
 	const celebrities = await prisma.celebrity.findMany({ where: { leagueId: params.leagueId }, orderBy: { addedAt: "asc" } });
