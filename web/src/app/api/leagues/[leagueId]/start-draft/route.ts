@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { leagueRepo, teamRepo } from "@/data";
 import type { Prisma } from "@prisma/client";
 
 export async function POST(_req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
@@ -7,14 +8,14 @@ export async function POST(_req: NextRequest, context: { params: Promise<{ leagu
     const body = await _req.json().catch(() => ({}));
     const requesterTeamId = String(body?.teamId || "").trim();
     // Accept either invite token or actual league id
-    const league = await prisma.league.findFirst({ where: { OR: [{ joinToken: leagueId }, { id: leagueId }] } });
+    const league = await leagueRepo.getLeagueByJoinOrId(leagueId);
     if (!league) {
         return NextResponse.json({ error: "league not found" }, { status: 404 });
     }
     if (league.status !== "setup") {
         return NextResponse.json({ error: "league not in setup" }, { status: 409 });
     }
-    const teams = await prisma.team.findMany({ where: { leagueId: league.id }, orderBy: { joinedAt: "asc" } });
+    const teams = await teamRepo.listTeamsByLeague(league.id, "joinedAt");
     if (teams.length < 2) {
         return NextResponse.json({ error: "need at least 2 teams" }, { status: 409 });
     }

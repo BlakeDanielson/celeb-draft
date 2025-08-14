@@ -44,7 +44,8 @@ export async function fetchWithIfModifiedSince<T>(
         return { status: 304, lastModified, etag };
     }
     if (!res.ok) {
-        const body = await res.json().catch(() => ({} as any));
+        type ErrorBody = { error?: string };
+        const body = (await res.json().catch(() => ({}))) as ErrorBody;
         throw new Error(body?.error || `HTTP ${res.status}`);
     }
     const data = (await res.json()) as T;

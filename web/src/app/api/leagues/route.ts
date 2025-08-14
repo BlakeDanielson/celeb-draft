@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { leagueRepo } from "@/data";
 
 function generateJoinToken(): string {
 	return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
@@ -18,14 +18,11 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: "maxTeams must be 2-20" }, { status: 400 });
 	}
 
-	const league = await prisma.league.create({
-		data: {
-			name,
-			joinToken: generateJoinToken(),
-			status: "setup",
-			maxTeams,
-			picksPerTeam,
-		},
+	const league = await leagueRepo.createLeague({
+		name,
+		joinToken: generateJoinToken(),
+		maxTeams,
+		picksPerTeam,
 	});
 
 	return NextResponse.json(league);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { leagueRepo, teamRepo, draftPickRepo } from "@/data";
 import { createHash } from "crypto";
 
 type TeamRow = { joinedAt: string | Date };
@@ -8,9 +8,9 @@ type PickRow = { pickedAt: string | Date };
 export async function GET(req: NextRequest, context: { params: Promise<{ leagueId: string }> }) {
     const { leagueId } = await context.params;
 	const [league, teams, picks] = await Promise.all([
-		prisma.league.findUnique({ where: { id: leagueId } }),
-		prisma.team.findMany({ where: { leagueId }, orderBy: { draftPosition: "asc" } }),
-		prisma.draftPick.findMany({ where: { leagueId }, orderBy: { overall: "asc" } }),
+		leagueRepo.getLeagueById(leagueId),
+		teamRepo.listTeamsByLeague(leagueId, "draftPosition"),
+		draftPickRepo.listPicksByLeague(leagueId),
 	]);
 	if (!league) {
 		return NextResponse.json({ error: "not found" }, { status: 404 });

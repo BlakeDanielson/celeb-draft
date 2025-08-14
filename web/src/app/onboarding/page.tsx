@@ -45,9 +45,9 @@ export default function OnboardingPage() {
 			}
             const data = await res.json();
             setJoinMsg("Draft started.");
-            if (Array.isArray(data?.order)) {
-                // brief inline preview of order
-                const preview = data.order.map((t: any) => `${t.draftPosition}. ${t.displayName}`).join(", ");
+                if (Array.isArray(data?.order)) {
+                type OrderRow = { draftPosition: number; displayName: string };
+                const preview = (data.order as OrderRow[]).map((t) => `${t.draftPosition}. ${t.displayName}`).join(", ");
                 setJoinMsg(`Draft started. Order: ${preview}`);
             }
 			// Navigate to the draft page once the draft has started
