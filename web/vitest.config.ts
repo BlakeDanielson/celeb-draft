@@ -7,6 +7,10 @@ export default defineConfig({
 		environment: "node",
 		testTimeout: 30000,
 		globals: true,
+		sequence: {
+			concurrent: false,
+			shuffle: false,
+		},
 	},
 	resolve: {
 		alias: {
