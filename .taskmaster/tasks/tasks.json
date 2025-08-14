@@ -105,8 +105,8 @@
             "id": 11,
             "title": "Backend integration tests (core flows)",
             "description": "Single consolidated integration test suite covering league create, join, celebrity add/list, draft start, pick, draft-state, recap.",
-            "details": "",
-            "status": "pending",
+            "details": "<info added on 2025-08-14T02:54:59.899Z>\n# Backend Integration Test Plan\n\n## Test Setup\n- Dev dependencies: vitest, tsx (optional), @types/node\n- Use Node test environment\n\n## Structure\n- `web/vitest.config.ts` – Configure Node test environment with tsconfig paths support\n- `web/tests/helpers/testDb.ts` – Isolated SQLite test database management\n  - Sets DATABASE_URL=file:./dev.test.db\n  - Handles migration/reset before tests\n  - Creates new Prisma instance per test run\n- `web/tests/integration/coreFlows.test.ts` – Core flow coverage:\n  - Create league → Join (commissioner + one more)\n  - Add/list celebrity\n  - Start draft → Pick → Draft-state → Recap\n\n## Testing Approach\n- Import route handlers and invoke with synthetic NextRequest + params\n- Extract JSON from NextResponse\n- Set dedicated test database via process.env.DATABASE_URL\n- Use Prisma migrate deploy (preferred) or db push for schema setup\n- Consider spawning child process for migrations or use direct Prisma commands\n\n## Cleanup\n- Remove test database file after test suite completion\n\n## CI Integration\n- Add npm script: \"test\" to run vitest\n\n## Exit Criteria\n- All core flows pass against actual handlers and database\n</info added on 2025-08-14T02:54:59.899Z>",
+            "status": "in-progress",
             "dependencies": [],
             "parentTaskId": 1
           }
@@ -1474,7 +1474,7 @@
     ],
     "metadata": {
       "created": "2025-08-12T20:36:42.249Z",
-      "updated": "2025-08-14T02:34:56.247Z",
+      "updated": "2025-08-14T02:54:37.710Z",
       "description": "Tasks for master context"
     }
   }
